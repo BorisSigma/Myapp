@@ -1,0 +1,77 @@
+package com.example.myapplication.fragments;
+
+
+
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.example.myapplication.R;
+import com.example.myapplication.db.DatabaseHelper;
+
+
+public class LoginFragment extends Fragment { ;
+    private DatabaseHelper databaseHelper;
+    private EditText loginEt;
+    private EditText passwordEt;
+    private AppCompatButton button;
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.login_fragment, container, false);
+    }
+
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        loginEt = view.findViewById(R.id.logo_in_login);
+        passwordEt = view.findViewById(R.id.logo_in_pass);
+        button = view.findViewById(R.id.bt_logo_in);
+        databaseHelper = new DatabaseHelper(getContext());
+
+        @SuppressLint("ResourceType") NavController navController = Navigation.findNavController(view);
+        button.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("CommitPrefEdits")
+            @Override
+            public void onClick(View view) {
+                String login = loginEt.getText().toString().trim();
+                String pass = passwordEt.getText().toString().trim();
+                if (login.isEmpty() || pass.isEmpty()) {
+                    Toast.makeText(view.getContext(), "Введите логин и пароль", Toast.LENGTH_LONG).show();
+                }
+                else {
+
+                    if(databaseHelper.getPasswordByLogin(login) != null && databaseHelper.getPasswordByLogin(login).equals(pass)){
+                        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("id_user", Context.MODE_PRIVATE);
+                        sharedPreferences.edit().putLong("user_id", databaseHelper.getUserIdByLogin(login)).apply();
+                        Bundle bundle = new Bundle();
+                        bundle.putLong("id_user", databaseHelper.getUserIdByLogin(login));
+                        navController.navigate(R.id.profilfragment, bundle);
+                    }
+                    else {
+                        Toast.makeText(view.getContext(), "Логин или пароль введен не верно", Toast.LENGTH_LONG).show();
+                    }
+
+                }
+            }
+        });
+    }
+}

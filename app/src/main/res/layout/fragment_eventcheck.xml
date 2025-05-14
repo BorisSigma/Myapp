@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/event_chek_fragment"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="40dp">
+
+        <ImageView
+            android:id="@+id/event_chek_back"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:background="@drawable/image8"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="100dp"
+            android:layout_height="58dp"
+            android:layout_margin="30dp"
+            android:background="@drawable/image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/event_chek_usser_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Имя пользоваетеля"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView2"
+            android:layout_marginTop="40dp"
+            android:textSize="16sp"
+            android:layout_marginLeft="80dp"/>
+
+        <TextView
+            android:id="@+id/event_chek_stars_value_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(5.0)"
+            android:layout_marginTop="41dp"
+            android:layout_marginLeft="20dp"
+            app:layout_constraintStart_toEndOf="@+id/event_chek_usser_name"
+            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/image6"
+            app:layout_constraintEnd_toStartOf="@+id/event_chek_usser_name"
+            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+
+        <ImageView
+            android:id="@+id/event_chel_image"
+            android:layout_width="320dp"
+            android:layout_height="244dp"
+            android:background="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="40dp"
+            app:layout_constraintTop_toBottomOf="@+id/event_chek_usser_name" />
+        <TextView
+            android:id="@+id/event_chek_n"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="40dp"
+            android:hint="Название"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/event_chel_image" />
+
+        <TextView
+            android:id="@+id/event_chek_event_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Название"
+            android:layout_marginTop="40dp"
+            android:layout_marginLeft="60dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/event_chek_n" />
+        <TextView
+            android:id="@+id/event_chek_c"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="40dp"
+            android:hint="Категория"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/event_chek_event_name" />
+        <TextView
+            android:id="@+id/event_chek_event_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Категория"
+            android:layout_marginTop="40dp"
+            android:layout_marginLeft="60dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/event_chek_c" />
+        <TextView
+            android:id="@+id/event_chek_d"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="40dp"
+            android:hint="Описание"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/event_chek_event_category" />
+
+        <TextView
+            android:id="@+id/event_chek_event_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:layout_marginLeft="60dp"
+            android:text="Описание"
+            android:singleLine="false"
+            android:breakStrategy="simple"
+            android:hyphenationFrequency="full"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/event_chek_d" />
+
+        <TextView
+            android:id="@+id/event_chek_t"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            android:hint="Опубликовано:"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="40dp"
+            app:layout_constraintTop_toBottomOf="@+id/event_chek_stars_value_e" />
+
+        <TextView
+            android:id="@+id/event_chek_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="время"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="135dp"
+            app:layout_constraintStart_toStartOf="@+id/event_chek_t"
+            app:layout_constraintTop_toBottomOf="@+id/event_chek_stars_value_event" />
+        <TextView
+            android:id="@+id/event_chek_stars_value_e"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="40dp"
+            android:hint="Оценка события"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/event_chek_event_description" />
+
+        <TextView
+            android:id="@+id/event_chek_stars_value_event"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(5.0)"
+            app:layout_constraintStart_toEndOf="@+id/event_chek_stars_value_e"
+            app:layout_constraintTop_toBottomOf="@+id/event_chek_event_description"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="30dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/event_chek_stars_up"
+            android:layout_width="146dp"
+            android:layout_height="46dp"
+            android:text="Похвалить"
+            android:textColor="@color/white"
+            android:layout_marginTop="90dp"
+            android:background="@drawable/mybutton1"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/event_chek_stars_value_e" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/event_chek_stars_down"
+            android:layout_width="146dp"
+            android:layout_height="46dp"
+            android:text="Пожаловаться"
+            android:textColor="@color/white"
+            android:layout_marginTop="90dp"
+            android:background="@drawable/mybutton1"
+            app:layout_constraintStart_toStartOf="@id/event_chek_stars_up"
+            android:layout_marginLeft="200dp"
+            app:layout_constraintTop_toBottomOf="@+id/event_chek_stars_value_e" />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

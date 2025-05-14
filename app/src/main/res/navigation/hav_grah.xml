@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/hav_grah"
+    app:startDestination="@id/blankFragment">
+    <fragment
+        android:id="@+id/blankFragment"
+        android:name="com.example.myapplication.fragments.StartFragment"
+        android:label="fragment_blank"
+        tools:layout="@layout/start_fragment" >
+        <action
+            android:id="@+id/action_blankFragment_to_blankFragment2"
+            app:destination="@id/blankFragment2" />
+        <action
+            android:id="@+id/action_blankFragment_to_blankFragment3"
+            app:destination="@id/blankFragment3" />
+        <action
+            android:id="@+id/action_blankFragment_to_profilfragment"
+            app:destination="@id/profilfragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/blankFragment2"
+        android:name="com.example.myapplication.fragments.LoginFragment"
+        android:label="fragment_blank2"
+        tools:layout="@layout/login_fragment" >
+
+        <action
+            android:id="@+id/action_blankFragment2_to_profilfragment"
+            app:destination="@id/profilfragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/blankFragment3"
+        android:name="com.example.myapplication.fragments.RegistrFragment"
+        android:label="fragment_blank3"
+        tools:layout="@layout/registr_fragment" >
+        <action
+            android:id="@+id/action_blankFragment3_to_profilfragment"
+            app:destination="@id/profilfragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profilfragment"
+        android:name="com.example.myapplication.fragments.Profilfragment"
+        android:label="fragment_blank"
+        tools:layout="@layout/profil_fragmernt" >
+        <action
+            android:id="@+id/action_profilfragment_to_mapsFragment2"
+            app:destination="@id/mapsFragment" />
+        <action
+            android:id="@+id/action_profilfragment_to_eventlst"
+            app:destination="@id/eventlst" />
+        <action
+            android:id="@+id/action_profilfragment_to_chekProfil"
+            app:destination="@id/chekProfil" />
+        <action
+            android:id="@+id/action_profilfragment_to_blankFragment"
+            app:destination="@id/blankFragment" />
+        <action
+            android:id="@+id/action_profilfragment_to_editProfil"
+            app:destination="@id/editProfil" />
+        <action
+            android:id="@+id/action_profilfragment_to_add_Event"
+            app:destination="@id/add_Event" />
+    </fragment>
+    <fragment
+        android:id="@+id/mapsFragment"
+        android:name="com.example.myapplication.fragments.MapsFragment"
+        android:label="fragment_maps"
+        tools:layout="@layout/fragment_maps" >
+        <action
+            android:id="@+id/action_mapsFragment_to_eventcheck"
+            app:destination="@id/eventcheck" />
+        <action
+            android:id="@+id/action_mapsFragment_to_profilfragment"
+            app:destination="@id/profilfragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventlst"
+        android:name="com.example.myapplication.fragments.Eventlst"
+        android:label="fragment_eventlst"
+        tools:layout="@layout/fragment_eventlst" >
+        <action
+            android:id="@+id/action_eventlst_to_profilfragment"
+            app:destination="@id/profilfragment" />
+        <action
+            android:id="@+id/action_eventlst_to_add_Event"
+            app:destination="@id/add_Event" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventcheck"
+        android:name="com.example.myapplication.fragments.Eventcheck"
+        android:label="fragment_eventcheck"
+        tools:layout="@layout/fragment_eventcheck" >
+        <action
+            android:id="@+id/action_eventcheck_to_mapsFragment"
+            app:destination="@id/mapsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chekProfil"
+        android:name="com.example.myapplication.fragments.ChekProfil"
+        android:label="fragment_chek_profil"
+        tools:layout="@layout/fragment_chek_profil" >
+        <action
+            android:id="@+id/action_chekProfil_to_profilfragment"
+            app:destination="@id/profilfragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editProfil"
+        android:name="com.example.myapplication.EditProfil"
+        android:label="fragment_edit_profil"
+        tools:layout="@layout/fragment_edit_profil" />
+    <fragment
+        android:id="@+id/add_Event"
+        android:name="com.example.myapplication.Add_Event"
+        android:label="fragment_add__event"
+        tools:layout="@layout/fragment_add__event" />
+
+
+</navigation>
