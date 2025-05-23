@@ -37,6 +37,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MapsFragment extends Fragment{
     private FusedLocationProviderClient fusedLocationClient;
@@ -67,15 +68,21 @@ public class MapsFragment extends Fragment{
                         Manifest.permission.ACCESS_FINE_LOCATION}, request_Code);
             }
             if (isTouch) {
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(firstLatLng, 10));
+                long user_id = getArguments().getLong("id_user", -1);
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(getCityLatLng(getContext(), databaseHelper.getUserCityById(user_id)), 10));
             }
             try {
                 googleMap.setMyLocationEnabled(true);
                 fusedLocationClient.getLastLocation()
                         .addOnSuccessListener(location -> {
+                            long user_id = getArguments().getLong("id_user", -1);
                             if (location != null) {
+
                                 LatLng userLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-                                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 10));
+                                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 15));
+                            }
+                            else {
+                                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(getCityLatLng(getContext(), databaseHelper.getUserCityById(user_id)), 10));
                             }
                         });
             } catch (Exception e) {
@@ -86,6 +93,7 @@ public class MapsFragment extends Fragment{
                 for (int i = 0; i < events.size(); i++) {
                     try {
                         LatLng latLng = getLocationFromAddress(events.get(i).getEventLocation(), googleMap);
+                        System.out.println(latLng);
                         googleMap.addMarker(new MarkerOptions().position(latLng).title(events.get(i).getEventLocation()));
                     } catch (Exception e) {
                         throw new RuntimeException(e);
@@ -127,8 +135,20 @@ public class MapsFragment extends Fragment{
             if (mapFragment != null) {
                 mapFragment.getMapAsync(callback);
             }
+
             imghome = view.findViewById(R.id.logo_maps);
             img_lsstt_event = view.findViewById(R.id.event_lst_maps);
+            img_add_event = view.findViewById(R.id.add_event_maps);
+            img_add_event.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    long user_id = getArguments().getLong("id_user", -1);
+                    Bundle bundle = new Bundle();
+                    bundle.putLong("id_user", user_id);
+                    bundle.putInt("exit", 0);
+                    navController.navigate(R.id.blankFragment4, bundle);
+                }
+            });
             img_lsstt_event.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -166,5 +186,40 @@ public class MapsFragment extends Fragment{
             }
             return latLng;
         }
+    public LatLng getCityLatLng(Context context, String cityName) {
+        if (cityName == null || cityName.trim().isEmpty()) {
+            Log.w("Geocoder", "Пустое название города");
+            return null;
+        }
+
+        Geocoder geocoder = new Geocoder(context, new Locale("ru", "RU"));
+
+        try {
+            List<Address> addresses = geocoder.getFromLocationName(cityName + ", Россия", 5);
+
+            if (addresses == null || addresses.isEmpty()) {
+                Log.i("Geocoder", "Город не найден: " + cityName);
+                return firstLatLng;
+            }
+            for (Address address : addresses) {
+                if (address.getCountryCode() != null &&
+                        address.getCountryCode().equalsIgnoreCase("RU") &&
+                        address.hasLatitude() &&
+                        address.hasLongitude()) {
+
+                    return new LatLng(
+                            address.getLatitude(),
+                            address.getLongitude()
+                    );
+                }
+            }
+        } catch (IOException e) {
+            Log.e("Geocoder", "Ошибка подключения: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            Log.e("Geocoder", "Некорректные параметры: " + e.getMessage());
+        }
+
+        return null;
     }
+}
 

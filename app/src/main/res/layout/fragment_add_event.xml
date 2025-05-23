@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/event_chek_fragment"
+    android:id="@+id/event_ad_fragment"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -29,7 +29,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/event_chek_image"
+            android:id="@+id/event_add_image"
             android:layout_width="320dp"
             android:layout_height="244dp"
             android:layout_marginTop="40dp"
@@ -38,15 +38,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView11" />
 
-        <TextView
+        <ImageView
+            android:id="@+id/add_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Нажимите для добавления картинки"
-            android:textColor="@color/black"
-            app:layout_constraintBottom_toBottomOf="@+id/event_chek_image"
-            app:layout_constraintEnd_toEndOf="@+id/event_chek_image"
-            app:layout_constraintStart_toStartOf="@+id/event_chek_image"
-            app:layout_constraintTop_toTopOf="@+id/event_chek_image" />
+            android:background="@drawable/image11"
+            app:layout_constraintBottom_toBottomOf="@+id/event_add_image"
+            app:layout_constraintEnd_toEndOf="@+id/event_add_image"
+            app:layout_constraintStart_toStartOf="@+id/event_add_image"
+            app:layout_constraintTop_toTopOf="@+id/event_add_image" />
         <TextView
             android:id="@+id/event_chek_n_add"
             android:layout_width="wrap_content"
@@ -55,13 +55,14 @@
             android:layout_marginLeft="40dp"
             android:hint="Название"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/event_chek_image" />
+            app:layout_constraintTop_toBottomOf="@+id/event_add_image" />
         <EditText
             android:id="@+id/event_add_event_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Добавьте название"
             android:padding="2dp"
+            android:gravity="center"
             android:background="@drawable/mybt3"
             android:layout_marginTop="40dp"
             android:layout_marginLeft="60dp"
@@ -77,17 +78,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/event_add_event_name" />
 
-        <EditText
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/event_add_event_category"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="48dp"
+            android:background="@drawable/mybt3"
+            android:gravity="center"
             android:hint="Добавьте категорию"
             android:padding="2dp"
-            android:background="@drawable/mybt3"
-            android:layout_marginTop="40dp"
-            android:layout_marginLeft="60dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/event_chek_c_add" />
+
         <TextView
             android:id="@+id/event_chek_add"
             android:layout_width="wrap_content"
@@ -108,6 +111,7 @@
             android:background="@drawable/mybt3"
             android:singleLine="false"
             android:padding="2dp"
+            android:gravity="center"
             android:breakStrategy="simple"
             android:hyphenationFrequency="full"
             app:layout_constraintStart_toStartOf="parent"
@@ -115,7 +119,7 @@
 
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/event_chek_stars_up"
+            android:id="@+id/event_add_event"
             android:layout_width="200dp"
             android:layout_height="46dp"
             android:background="@drawable/mybutton1"

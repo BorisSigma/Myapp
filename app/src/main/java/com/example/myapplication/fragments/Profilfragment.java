@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +31,11 @@ import android.widget.Toast;
 import com.example.myapplication.R;
 import com.example.myapplication.db.DatabaseHelper;
 import com.example.myapplication.domain.Event;
+import com.example.myapplication.exepion.NotFoundEventExecion;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 
 public class Profilfragment extends Fragment {
@@ -73,6 +81,15 @@ public class Profilfragment extends Fragment {
         eventLst = view.findViewById(R.id.event_list_bt);
         editProfilbt = view.findViewById(R.id.profil_edit_bt);
         myProfilbt = view.findViewById(R.id.my_profil_bt);
+        addEventBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putLong("id_user", id);
+                bundle.putInt("exit", 1);
+                navController.navigate(R.id.blankFragment4, bundle);
+            }
+        });
         myProfilbt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,6 +124,48 @@ public class Profilfragment extends Fragment {
                 dialog.show();
                 ImageView img1 = dialog.findViewById(R.id.imageView5);
                 ImageView img2 = dialog.findViewById(R.id.img6);
+                ImageView img3 = dialog.findViewById(R.id.img7);
+                img3.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                        Dialog dialog3 = new Dialog(view.getContext());
+                        dialog3.setContentView(R.layout.city_edit);
+                        dialog3.setCancelable(true);
+                        Window window3 = dialog3.getWindow();
+                        if (window3 != null) {
+                            window3.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                            window3.setGravity(Gravity.TOP);
+                            window3.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+                        }
+                        dialog3.show();
+                        TextView help_text = dialog3.findViewById(R.id.change_city_help);
+                        EditText new_city = dialog3.findViewById(R.id.et_new_city);
+                        AppCompatButton change_city = dialog3.findViewById(R.id.change_city);
+                        change_city.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                String new_city_str = new_city.getText().toString().trim();
+                                Geocoder geocoder = new Geocoder(getContext(), new Locale("ru", "RU"));
+                                try {
+                                    List<Address> addresses = geocoder.getFromLocationName(new_city_str + ", Россия", 5);
+                                    if (addresses == null || addresses.isEmpty()) {
+                                        help_text.setText("Город не поддерживарется");
+                                    }
+                                    else {
+                                        dbHelper.updateUserCity(id, new_city_str);
+                                        dialog3.dismiss();
+                                        Toast.makeText(dialog3.getContext(), "Данные обновленны", Toast.LENGTH_LONG).show();
+                                    }
+                                } catch (IOException e) {
+                                    throw new NotFoundEventExecion("Ты лох");
+                                }
+
+                            }
+                        });
+
+                    }
+                });
                 img1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

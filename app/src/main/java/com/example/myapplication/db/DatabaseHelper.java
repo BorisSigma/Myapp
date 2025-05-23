@@ -43,7 +43,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "event_description TEXT," +
                         "event_location TEXT NOT NULL," +
                         "event_stars_value TEXT DEFAULT 5," +
-                        "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                        "timestamp DATETIME DEFAULT (datetime('now', '+3 hours'))," +
                         "category TEXT NOT NULL," +
                         "eventUrl TEXT," +
                         "eventUsername TEXT NOT NULL," +
@@ -57,8 +57,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS events");
         onCreate(db);
     }
-
-    // ========================== User Methods ==========================
+    public boolean updateEventStars(long eventId, String newStarsValue) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("event_stars_value", newStarsValue);
+        int rows = db.update("events",
+                values,
+                "id = ?",
+                new String[]{String.valueOf(eventId)});
+        db.close();
+        return rows > 0;
+    }
+    public boolean updateUserStars(long userId, String newStarsValue) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("starsvalue", newStarsValue);
+        int rows = db.update("users",
+                values,
+                "id = ?",
+                new String[]{String.valueOf(userId)});
+        db.close();
+        return rows > 0;
+    }
 
     public long addUser(String login, String password, String city, String username) {
         SQLiteDatabase db = this.getWritableDatabase();

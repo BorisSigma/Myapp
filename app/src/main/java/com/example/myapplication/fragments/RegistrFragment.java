@@ -3,6 +3,8 @@ package com.example.myapplication.fragments;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,14 +14,21 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.myapplication.R;
 import com.example.myapplication.db.DatabaseHelper;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 
 public class RegistrFragment extends Fragment {
@@ -31,12 +40,21 @@ public class RegistrFragment extends Fragment {
     private EditText user_nameEt;
     private EditText cityEt;
      private AppCompatButton regBt;
+    private boolean isPasswordVisible = false;
+    private  void togglePasswordVisibility(EditText editText) {
+        if (isPasswordVisible) {
+            editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        } else {
+            editText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+        }
+        isPasswordVisible = !isPasswordVisible;
+    }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.registr_fragment, container, false);
     }
 
@@ -50,6 +68,26 @@ public class RegistrFragment extends Fragment {
         cityEt = view.findViewById(R.id.reg_city_new);
         regBt = view.findViewById(R.id.bt_reg_reg);
         databaseHelper = new DatabaseHelper(getContext());
+        ImageView eyes = view.findViewById(R.id.eyes2);
+        ImageView eyes1 = view.findViewById(R.id.eyes3);
+        eyes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                togglePasswordVisibility(passEt1);
+            }
+        });
+        eyes1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                togglePasswordVisibility(passEt2);
+            }
+        });
+        eyes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                togglePasswordVisibility(passEt1);
+            }
+        });
         @SuppressLint("ResourceType") NavController navController = Navigation.findNavController(view);
         regBt.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("CommitPrefEdits")
@@ -66,33 +104,39 @@ public class RegistrFragment extends Fragment {
                 else {
                     if(databaseHelper.isLoginUnique(login)){
                         if(pass1.equals(pass2)){
-                            if (city.equals("Москва")|| city.equals("москва")){
+                            Geocoder geocoder = new Geocoder(getContext(), new Locale("ru", "RU"));
+                            System.out.println(geocoder);
+                            try {
+                                List<Address> addresses = geocoder.getFromLocationName(city + ", Россия", 5);
+                                System.out.println(addresses);
 
-                                databaseHelper.addUser(login,pass1, city, user_name);
-                                SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("id_user", Context.MODE_PRIVATE);
-                                sharedPreferences.edit().putLong("user_id", databaseHelper.getUserIdByLogin(login)).apply();
-                                Bundle bundle = new Bundle();
-                                bundle.putLong("id_user", databaseHelper.getUserIdByLogin(login));
-                                navController.navigate(R.id.profilfragment, bundle);
-
-                            }
-                            else {
-                                Toast.makeText(view.getContext(), "Город не поддреживается", Toast.LENGTH_LONG).show();
-                            }
-
+                                if (addresses == null || addresses.isEmpty()) {
+                                    Log.i("Geocoder", "Город не найден: " + city);
+                                    Toast.makeText(view.getContext(), "Город не поддреживается", Toast.LENGTH_LONG).show();
+                                }
+                                else {
+                                    databaseHelper.addUser(login,pass1, city, user_name);
+                                    SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("id_user", Context.MODE_PRIVATE);
+                                    sharedPreferences.edit().putLong("user_id", databaseHelper.getUserIdByLogin(login)).apply();
+                                    Bundle bundle = new Bundle();
+                                    bundle.putLong("id_user", databaseHelper.getUserIdByLogin(login));
+                                    navController.navigate(R.id.profilfragment, bundle);
+                                }
+                            } catch (IOException e) {
+                                System.out.println(e.getMessage());
+                                throw new RuntimeException(e);}
                         }
-                        else {
-                            Toast.makeText(view.getContext(), "Пароли не совпадают", Toast.LENGTH_LONG).show();
+                        else {Toast.makeText(view.getContext(), "Пароли не совпадают", Toast.LENGTH_LONG).show();
                         }
 
-                    }
+                }
                     else {
                         Toast.makeText(view.getContext(), "Логин уже занят", Toast.LENGTH_LONG).show();
                     }
-                }
 
             }
-        });
+        }
 
-    }
+    });
+}
 }

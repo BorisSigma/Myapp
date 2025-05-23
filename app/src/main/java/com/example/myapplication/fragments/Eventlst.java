@@ -77,9 +77,7 @@ public class Eventlst extends Fragment {
             public void onClick(View view) {
                 Dialog dialog = new Dialog(view.getContext());
                 dialog.setContentView(R.layout.filter_event);
-
-                // Инициализация RadioGroup ПРАВИЛЬНО
-                RadioGroup radioGroup = dialog.findViewById(R.id.categoryRadioGroup); // ← Важное исправление
+                RadioGroup radioGroup = dialog.findViewById(R.id.categoryRadioGroup);
 
                 radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
@@ -94,9 +92,52 @@ public class Eventlst extends Fragment {
                             recyclerView.setAdapter(eventAdapter);
                             return;
                         } else if (checkedId == R.id.radioSecurity) {
-                            category = "Безопасность"; // ← Исправлена опечатка
+                            category = "Безопасность";
                         } else if (checkedId == R.id.radioCommunication) {
-                            category = "Коммуникации"; // ← Исправлена опечатка
+                            category = "Коммуникации";
+                        }
+
+                        eventAdapter = new EventAdapter(
+                                getContext(),
+                                databaseHelper.getEventsByCategory(category)
+                        );
+                        recyclerView.setAdapter(eventAdapter);
+                    }
+                });
+
+                dialog.setCancelable(true);
+                Window window = dialog.getWindow();
+                if (window != null) {
+                    window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    window.setGravity(Gravity.BOTTOM);
+                    window.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+                }
+                dialog.show();
+            }
+        });
+        filter_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Dialog dialog = new Dialog(view.getContext());
+                dialog.setContentView(R.layout.filter_event);
+                RadioGroup radioGroup = dialog.findViewById(R.id.categoryRadioGroup);
+
+                radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        dialog.dismiss();
+
+                        String category = "";
+                        if (checkedId == R.id.radioTransport) {
+                            category = "Транспорт";
+                        } else if (checkedId == R.id.radioAll) {
+                            eventAdapter = new EventAdapter(getContext(), databaseHelper.getAllEvents());
+                            recyclerView.setAdapter(eventAdapter);
+                            return;
+                        } else if (checkedId == R.id.radioSecurity) {
+                            category = "Безопасность";
+                        } else if (checkedId == R.id.radioCommunication) {
+                            category = "Коммуникации";
                         }
 
                         eventAdapter = new EventAdapter(

@@ -60,7 +60,13 @@
             app:destination="@id/editProfil" />
         <action
             android:id="@+id/action_profilfragment_to_add_Event"
-            app:destination="@id/add_Event" />
+            app:destination="@id/blankFragment4" />
+        <action
+            android:id="@+id/action_profilfragment_to_addEvent"
+            app:destination="@id/blankFragment4" />
+        <action
+            android:id="@+id/action_profilfragment_to_blankFragment4"
+            app:destination="@id/blankFragment4" />
     </fragment>
     <fragment
         android:id="@+id/mapsFragment"
@@ -73,6 +79,9 @@
         <action
             android:id="@+id/action_mapsFragment_to_profilfragment"
             app:destination="@id/profilfragment" />
+        <action
+            android:id="@+id/action_mapsFragment_to_blankFragment4"
+            app:destination="@id/blankFragment4" />
     </fragment>
     <fragment
         android:id="@+id/eventlst"
@@ -84,7 +93,7 @@
             app:destination="@id/profilfragment" />
         <action
             android:id="@+id/action_eventlst_to_add_Event"
-            app:destination="@id/add_Event" />
+            app:destination="@id/blankFragment4" />
     </fragment>
     <fragment
         android:id="@+id/eventcheck"
@@ -106,14 +115,18 @@
     </fragment>
     <fragment
         android:id="@+id/editProfil"
-        android:name="com.example.myapplication.EditProfil"
+        android:name="com.example.myapplication.fragments.EditProfil"
         android:label="fragment_edit_profil"
         tools:layout="@layout/fragment_edit_profil" />
     <fragment
-        android:id="@+id/add_Event"
-        android:name="com.example.myapplication.Add_Event"
-        android:label="fragment_add__event"
-        tools:layout="@layout/fragment_add__event" />
+        android:id="@+id/blankFragment4"
+        android:name="com.example.myapplication.fragments.BlankFragment"
+        android:label="fragment_blank"
+        tools:layout="@layout/fragment_add_event" >
+        <action
+            android:id="@+id/action_blankFragment4_to_mapsFragment"
+            app:destination="@id/mapsFragment" />
+    </fragment>
 
 
 </navigation>

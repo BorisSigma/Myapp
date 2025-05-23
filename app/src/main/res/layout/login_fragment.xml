@@ -7,8 +7,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="40dp"
-    >
+    android:paddingBottom="40dp">
+
+
         <ImageView
             android:id="@+id/login_logo"
             android:layout_width="100dp"
@@ -91,6 +92,7 @@
             android:id="@+id/logo_in_pass"
             android:layout_width="290dp"
             android:layout_height="46dp"
+            android:inputType="textPassword"
             android:background="@drawable/mybutton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -98,6 +100,15 @@
             android:hint="Введите пароль"
             android:gravity="center"
             android:layout_marginTop="40dp"/>
+        <ImageView
+            android:id="@+id/eyes1"
+            android:layout_marginRight="20dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/image12"
+            app:layout_constraintBottom_toBottomOf="@+id/logo_in_pass"
+            app:layout_constraintEnd_toEndOf="@+id/logo_in_pass"
+            app:layout_constraintTop_toTopOf="@+id/logo_in_pass" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

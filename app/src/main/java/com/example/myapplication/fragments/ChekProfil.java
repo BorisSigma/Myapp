@@ -41,14 +41,13 @@ public class ChekProfil extends Fragment {
 
     return inflater.inflate(R.layout.fragment_chek_profil, container, false);
     }
-    private void togglePasswordVisibility() {
+    private  void togglePasswordVisibility() {
         if (isPasswordVisible) {
             pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         } else {
             pass.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
         }
         isPasswordVisible = !isPasswordVisible;
-
     }
 
     @SuppressLint("WrongViewCast")

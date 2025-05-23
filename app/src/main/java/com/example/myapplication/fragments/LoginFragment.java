@@ -14,10 +14,12 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.myapplication.R;
@@ -29,12 +31,20 @@ public class LoginFragment extends Fragment { ;
     private EditText loginEt;
     private EditText passwordEt;
     private AppCompatButton button;
-
+    private boolean isPasswordVisible = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.login_fragment, container, false);
+    }
+    private  void togglePasswordVisibility() {
+        if (isPasswordVisible) {
+            passwordEt.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        } else {
+            passwordEt.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+        }
+        isPasswordVisible = !isPasswordVisible;
     }
 
 
@@ -46,6 +56,14 @@ public class LoginFragment extends Fragment { ;
         passwordEt = view.findViewById(R.id.logo_in_pass);
         button = view.findViewById(R.id.bt_logo_in);
         databaseHelper = new DatabaseHelper(getContext());
+        ImageView eyes = view.findViewById(R.id.eyes1);
+        eyes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                togglePasswordVisibility();
+            }
+        });
+
 
         @SuppressLint("ResourceType") NavController navController = Navigation.findNavController(view);
         button.setOnClickListener(new View.OnClickListener() {

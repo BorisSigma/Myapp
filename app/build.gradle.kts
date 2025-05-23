@@ -33,8 +33,8 @@ android {
 }
 
 dependencies {
-
-
+    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
+    annotationProcessor ("com.jakewharton:butterknife:7.0.1")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -50,10 +50,15 @@ dependencies {
     val nav_version = "2.7.7"
     implementation("androidx.navigation:navigation-fragment:$nav_version")
     implementation("androidx.navigation:navigation-ui:$nav_version")
+    implementation (libs.ktx)
+    implementation (libs.glide)
+    implementation ("androidx.core:core-ktx:1.12.0")
+    implementation ("androidx.exifinterface:exifinterface:1.3.7")
 }
 dependencies {
     implementation ("com.google.android.gms:play-services-maps:18.2.0")
     implementation ("com.squareup.picasso:picasso:2.8")
+
 }
 dependencies {
     implementation ("com.google.android.gms:play-services-location:17.0.0")
@@ -72,4 +77,5 @@ dependencies {
 dependencies {
     implementation ("androidx.fragment:fragment:1.5.5")
 }
+
 
