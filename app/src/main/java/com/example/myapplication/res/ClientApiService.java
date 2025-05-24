@@ -11,24 +11,24 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
-import retrofit2.http.Query;
+
 
 public interface ClientApiService {
-    @GET("/user/{id}")
+    @GET("user/{id}")
     Call<Client> getClientById(@Path("id") long id);
 
-    @GET("/user")
+    @GET("user")
     Call<ArrayList<Client>> getAllClients();
 
-    @PUT("/user")
+    @PUT("user")
     Call<Client> updateClient(@Body Client client);
 
-    @POST("/user")
+    @POST("user")
     Call<Client> addClient(@Body Client client);
 
-    @DELETE("/user/{id}")
+    @DELETE("user/{id}")
     Call<Void> deleteClientById(@Path("id") long id);
 
-    @GET("/user/{login}")
-    Call<Client> getClientByLogin(@Query("login") String login);
+    @GET("user/login/{login}")
+    Call<Client> getClientByLogin(@Path("login") String login);
 }

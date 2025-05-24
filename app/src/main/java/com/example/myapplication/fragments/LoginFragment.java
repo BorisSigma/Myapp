@@ -15,6 +15,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,12 @@ import android.widget.Toast;
 
 import com.example.myapplication.R;
 import com.example.myapplication.db.DatabaseHelper;
+import com.example.myapplication.domain.Client;
+import com.example.myapplication.res.ApiClient;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class LoginFragment extends Fragment { ;
@@ -76,17 +83,34 @@ public class LoginFragment extends Fragment { ;
                     Toast.makeText(view.getContext(), "Введите логин и пароль", Toast.LENGTH_LONG).show();
                 }
                 else {
+                    ApiClient.Users.getService().getClientByLogin(login).enqueue(new Callback<Client>() {
+                        @Override
+                        public void onResponse(Call<Client> call, Response<Client> response) {
+                            if(response.body() != null){
+                                if(response.body().getPassword().equals(pass)){
+                                    SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("id_user", Context.MODE_PRIVATE);
+                                    sharedPreferences.edit().putLong("user_id", databaseHelper.getUserIdByLogin(login)).apply();
+                                    Bundle bundle = new Bundle();
+                                    bundle.putLong("id_user", databaseHelper.getUserIdByLogin(login));
+                                    navController.navigate(R.id.profilfragment, bundle);
 
-                    if(databaseHelper.getPasswordByLogin(login) != null && databaseHelper.getPasswordByLogin(login).equals(pass)){
-                        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("id_user", Context.MODE_PRIVATE);
-                        sharedPreferences.edit().putLong("user_id", databaseHelper.getUserIdByLogin(login)).apply();
-                        Bundle bundle = new Bundle();
-                        bundle.putLong("id_user", databaseHelper.getUserIdByLogin(login));
-                        navController.navigate(R.id.profilfragment, bundle);
-                    }
-                    else {
-                        Toast.makeText(view.getContext(), "Логин или пароль введен не верно", Toast.LENGTH_LONG).show();
-                    }
+                                }
+                                else Toast.makeText(view.getContext(), "Логин или пароль введен не верно", Toast.LENGTH_LONG).show();
+
+                            }
+                            else {
+                                Toast.makeText(view.getContext(), "Логин или пароль введен не верно", Toast.LENGTH_LONG).show();
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<Client> call, Throwable t) {
+                            Log.e("Z", t.getMessage());
+                            Toast.makeText(view.getContext(), "Ошибка на сервере", Toast.LENGTH_LONG).show();
+
+                        }
+                    });
 
                 }
             }

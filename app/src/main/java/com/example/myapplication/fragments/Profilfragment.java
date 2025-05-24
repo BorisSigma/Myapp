@@ -32,12 +32,18 @@ import android.widget.Toast;
 
 import com.example.myapplication.R;
 import com.example.myapplication.db.DatabaseHelper;
+import com.example.myapplication.domain.Client;
 import com.example.myapplication.domain.Event;
 import com.example.myapplication.exepion.NotFoundEventExecion;
+import com.example.myapplication.res.ApiClient;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class Profilfragment extends Fragment {
@@ -173,9 +179,23 @@ public class Profilfragment extends Fragment {
                                         help_text.setText("Город не поддерживарется");
                                     }
                                     else {
-                                        dbHelper.updateUserCity(id, new_city_str);
-                                        dialog3.dismiss();
-                                        Toast.makeText(dialog3.getContext(), "Данные обновленны", Toast.LENGTH_LONG).show();
+                                        Client client = new Client(id, dbHelper.getUserLoginById(id), new_city_str, dbHelper.getEventStarsValue(id), dbHelper.getUsernameById(id), dbHelper.getUserPasswordById(id));
+                                        ApiClient.Users.getService().updateClient(client).enqueue(new Callback<Client>() {
+                                            @Override
+                                            public void onResponse(Call<Client> call, Response<Client> response) {
+                                                if(response.isSuccessful()) {
+                                                    Toast.makeText(dialog3.getContext(), "Данные обновленны", Toast.LENGTH_LONG).show();
+                                                    dialog3.dismiss();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<Client> call, Throwable t) {
+                                                Toast.makeText(view.getContext(), "Проверьте интернет соединение", Toast.LENGTH_LONG).show();
+                                                dialog3.dismiss();
+                                            }
+                                        });
+
                                     }
                                 } catch (IOException e) {
                                     throw new NotFoundEventExecion("Ты лох");
@@ -206,10 +226,22 @@ public class Profilfragment extends Fragment {
                             @Override
                             public void onClick(View view) {
                                 String user_name_new = name.getText().toString().trim();
-                                dbHelper.updateUsername(id, user_name_new);
-                                user_name.setText(user_name_new);
-                                dialog2.dismiss();
-                                Toast.makeText(dialog2.getContext(), "Данные обновленны", Toast.LENGTH_LONG).show();
+                                Client client = new Client(id, dbHelper.getUserLoginById(id), dbHelper.getUserCityById(id), dbHelper.getEventStarsValue(id), user_name_new, dbHelper.getUserPasswordById(id));
+                                ApiClient.Users.getService().updateClient(client).enqueue(new Callback<Client>() {
+                                    @Override
+                                    public void onResponse(Call<Client> call, Response<Client> response) {
+                                        if(response.isSuccessful()) {
+                                            Toast.makeText(dialog2.getContext(), "Данные обновленны", Toast.LENGTH_LONG).show();
+                                            dialog2.dismiss();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Client> call, Throwable t) {
+                                        Toast.makeText(view.getContext(), "Проверьте интернет соединение", Toast.LENGTH_LONG).show();
+                                        dialog2.dismiss();
+                                    }
+                                });
                             }
                         });
 
@@ -236,14 +268,37 @@ public class Profilfragment extends Fragment {
                             @Override
                             public void onClick(View view) {
                                 String new_login_str = new_login.getText().toString().trim();
-                                if(dbHelper.isLoginUnique(new_login_str)){
-                                    dbHelper.updateUserLogin(id, new_login_str);
-                                }
-                                else {
-                                    help_text.setText("Логин не уникален");
-                                }
-                                dialog1.dismiss();
-                                Toast.makeText(dialog1.getContext(), "Данные обновленны", Toast.LENGTH_LONG).show();
+                                Client client = new Client(id, new_login_str, dbHelper.getUserCityById(id), dbHelper.getEventStarsValue(id), dbHelper.getUsernameById(id), dbHelper.getUserPasswordById(id));
+                                ApiClient.Users.getService().getClientByLogin(new_login_str).enqueue(new Callback<Client>() {
+                                    @Override
+                                    public void onResponse(Call<Client> call, Response<Client> response) {
+                                        if(response.isSuccessful() && response.body() == null) {
+                                            ApiClient.Users.getService().updateClient(client).enqueue(new Callback<Client>() {
+                                                @Override
+                                                public void onResponse(Call<Client> call, Response<Client> response) {
+                                                    Toast.makeText(dialog1.getContext(), "Данные обновленны", Toast.LENGTH_LONG).show();
+                                                    dialog1.dismiss();
+
+
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<Client> call, Throwable t) {
+                                                    Toast.makeText(view.getContext(), "Проверьте интернет соединение", Toast.LENGTH_LONG).show();
+                                                    dialog1.dismiss();
+
+                                                }
+                                            });
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Client> call, Throwable t) {
+                                        Toast.makeText(view.getContext(), "Проверьте интернет соединение", Toast.LENGTH_LONG).show();
+                                        dialog1.dismiss();
+
+                                    }
+                                });
                             }
                         });
 
