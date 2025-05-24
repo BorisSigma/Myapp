@@ -34,6 +34,8 @@ android {
 
 dependencies {
     implementation ("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     annotationProcessor ("com.jakewharton:butterknife:7.0.1")
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -65,6 +67,8 @@ dependencies {
 
 
     testImplementation ("junit:junit:4.12")
+    implementation ("androidx.room:room-runtime:2.6.1")
+    annotationProcessor ("androidx.room:room-compiler:2.6.1")
 
 
     androidTestImplementation ("androidx.test.ext:junit:1.1.1")

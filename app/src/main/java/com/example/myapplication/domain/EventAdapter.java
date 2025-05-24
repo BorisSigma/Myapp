@@ -2,7 +2,9 @@ package com.example.myapplication.domain;
 
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +32,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
     private ArrayList<Event> events;
     private DatabaseHelper databaseHelper;
     private Context context;
+
     private AdapterView.OnItemClickListener listener;
     public interface OnItemClickListener {
         void onItemClick(int position);
@@ -40,6 +43,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
     }
     public EventAdapter(Context context, ArrayList<Event> events) {
         this.context = context;
+
         this.events = events;
         this.inflater = LayoutInflater.from(context);
     }
@@ -66,11 +70,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
                 NavController navController = Navigation.findNavController(view);
                 Event event = events.get(position);
                 long event_id = event.getId();
-                System.out.println(event_id);
+                Activity activity = (Activity) context;
+                SharedPreferences sharedPreferences = activity.getSharedPreferences("id_user", Context.MODE_PRIVATE);
+                long id = sharedPreferences.getLong("user_id", -1);
                 Bundle bundle = new Bundle();
+                bundle.putLong("id_user", id);
                 bundle.putLong("id_event", event_id);
                 bundle.putInt("exit", 1);
-                System.out.println(bundle.getLong("id_event"));
                 navController.navigate(R.id.eventcheck, bundle);
             }
         });

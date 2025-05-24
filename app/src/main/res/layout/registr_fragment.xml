@@ -56,7 +56,7 @@
             android:id="@+id/reg_login"
             android:layout_width="165dp"
             android:layout_height="156dp"
-            android:background="@drawable/image3"
+            android:background="@drawable/logo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/reg_hello_text"

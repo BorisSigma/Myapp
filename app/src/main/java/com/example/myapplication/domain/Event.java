@@ -1,15 +1,30 @@
 package com.example.myapplication.domain;
 
-public class Event {
-    private long id;
-    private long userId;
-    private String eventName;
-    private String eventDescription;
-    private String eventLocation;
-    private String category;
-    private String eventUrl;
-    private String eventUsername;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+import com.google.gson.annotations.SerializedName;
+
+@Entity(tableName = "events")
+public class Event {
+    @PrimaryKey
+    @SerializedName("id")
+    private long id;
+    @SerializedName("userId")
+    private long userId;
+    @SerializedName("eventName")
+    private String eventName;
+    @SerializedName("eventDescription")
+    private String eventDescription;
+    @SerializedName("eventLocation")
+    private String eventLocation;
+    @SerializedName("category")
+    private String category;
+    @SerializedName("eventUrl")
+    private String eventUrl;
+    @SerializedName("eventUsername")
+    private String eventUsername;
+    @SerializedName("event_stars_value")
     private double event_stars_value;
 
     public Event(long userId, String eventName, String eventDescription, String eventLocation, String category, String eventUrl, String eventUsername) {
@@ -68,6 +83,42 @@ public class Event {
 
     public double getEvent_stars_value() {
         return event_stars_value;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
+
+    public void setEventDescription(String eventDescription) {
+        this.eventDescription = eventDescription;
+    }
+
+    public void setEventLocation(String eventLocation) {
+        this.eventLocation = eventLocation;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setEventUrl(String eventUrl) {
+        this.eventUrl = eventUrl;
+    }
+
+    public void setEventUsername(String eventUsername) {
+        this.eventUsername = eventUsername;
+    }
+
+    public void setEvent_stars_value(double event_stars_value) {
+        this.event_stars_value = event_stars_value;
     }
 }
 

@@ -1,11 +1,25 @@
 package com.example.myapplication.domain;
 
+
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+import com.google.gson.annotations.SerializedName;
+
+@Entity(tableName = "users")
 public  class Client{
+    @PrimaryKey
+    @SerializedName("id")
     private long id;
+    @SerializedName("login")
     private String login;
+    @SerializedName("city")
     private String city;
+    @SerializedName("starsvalue")
     private double starsvalue;
+    @SerializedName("username")
     private String username;
+    @SerializedName("password")
     private String password;
 
     public Client(String login, String password, String city, String username) {
@@ -49,17 +63,6 @@ public  class Client{
         return password;
     }
 
-    @Override
-    public String toString() {
-        return "Client{" +
-                "id='" + id + '\'' +
-                ", login='" + login + '\'' +
-                ", city='" + city + '\'' +
-                ", stars_value=" + starsvalue +
-                ", user_name='" + username + '\'' +
-                ", pass='" + password + '\'' +
-                '}';
-    }
 
     public void setId(long id) {
         this.id = id;

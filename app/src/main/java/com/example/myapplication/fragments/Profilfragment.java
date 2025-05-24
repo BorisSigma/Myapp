@@ -1,5 +1,7 @@
 package com.example.myapplication.fragments;
 
+import static com.example.myapplication.R.drawable.star_empty;
+
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
@@ -71,6 +73,24 @@ public class Profilfragment extends Fragment {
         starsValue.setText("(" + stars_vvalue + ")");
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("id_user", Context.MODE_PRIVATE);
         user_name = view.findViewById(R.id.profil_name);
+        double roundedRating = Math.round(stars_vvalue * 2) / 2.0;
+        ImageView[] stars = new ImageView[5];
+        stars[0] = view.findViewById(R.id.star1);
+        stars[1] = view.findViewById(R.id.star2);
+        stars[2] = view.findViewById(R.id.star3);
+        stars[3] = view.findViewById(R.id.star4);
+        stars[4] = view.findViewById(R.id.star5);
+
+        int fullStars = (int) roundedRating;
+        boolean hasHalfStar = (roundedRating - fullStars) >= 0.5;
+
+        for (int i = 0; i < 5; i++) {
+            if (i < fullStars) {
+                stars[i].setImageResource(R.drawable.star_full);
+            } else if (i == fullStars && hasHalfStar) {
+                stars[i].setImageResource(R.drawable.star_half);
+            } else stars[i].setBackground(null);
+        }
 
 
         String user_name_1 = dbHelper.getUsernameById(id);
