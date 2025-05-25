@@ -1,6 +1,7 @@
 package com.example.myapplication.fragments;
 
 import static android.app.Activity.RESULT_OK;
+import static android.widget.Toast.LENGTH_LONG;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -41,7 +42,9 @@ import com.bumptech.glide.Glide;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.db.DatabaseHelper;
+import com.example.myapplication.domain.Client;
 import com.example.myapplication.domain.Event;
+import com.example.myapplication.res.ApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.squareup.picasso.Picasso;
@@ -201,12 +204,39 @@ public class BlankFragment extends Fragment {
                         if (location != null) {
                             String userLatLng = location.getLatitude() + "," + location.getLongitude();
                             System.out.println(userLatLng);
-                            Event event = new Event(id, name, disc, userLatLng, cat, url ,
-                                    databaseHelper.getUsernameById(id));
-                            databaseHelper.addEvent(event);
-                            Bundle bundle = new Bundle();
-                            bundle.putLong("id_user", id);
-                            navController.navigate(R.id.mapsFragment, bundle);
+                            ApiClient.Users.getService().getClientById(id).enqueue(new retrofit2.Callback<Client>() {
+                                @Override
+                                public void onResponse(retrofit2.Call<Client> call, retrofit2.Response<Client> response) {
+                                    if(response.isSuccessful() && response.body() != null){
+                                        Event event = new Event(id, name, disc, userLatLng, cat, url ,response.body().getUsername());
+                                        ApiClient.Events.getService().addEvent(event).enqueue(new retrofit2.Callback<Event>() {
+                                            @Override
+                                            public void onResponse(retrofit2.Call<Event> call, retrofit2.Response<Event> response) {
+                                                if(response.isSuccessful() && response.body() != null){
+                                                    Bundle bundle = new Bundle();
+                                                    bundle.putLong("id_user", id);
+                                                    navController.navigate(R.id.mapsFragment, bundle);
+                                                }
+
+                                            }
+
+                                            @Override
+                                            public void onFailure(retrofit2.Call<Event> call, Throwable t) {
+                                                Toast.makeText(view.getContext(), "Проверьте интернет соединение", LENGTH_LONG).show();
+
+                                            }
+                                        });
+
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(retrofit2.Call<Client> call, Throwable t) {
+                                    Toast.makeText(view.getContext(), "Проверьте интернет соединение", LENGTH_LONG).show();
+
+                                }
+                            });
+
                         } else {
                             Toast.makeText(getContext(), "Не удалось получить местоположение", Toast.LENGTH_SHORT).show();
                         }

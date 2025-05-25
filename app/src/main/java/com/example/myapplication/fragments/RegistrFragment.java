@@ -45,7 +45,7 @@ public class RegistrFragment extends Fragment {
     private EditText passEt2;
     private EditText user_nameEt;
     private EditText cityEt;
-     private AppCompatButton regBt;
+    private AppCompatButton regBt;
     private boolean isPasswordVisible = false;
     private  void togglePasswordVisibility(EditText editText) {
         if (isPasswordVisible) {
@@ -111,12 +111,12 @@ public class RegistrFragment extends Fragment {
                     ApiClient.Users.getService().getClientByLogin(login).enqueue(new Callback<Client>() {
                         @Override
                         public void onResponse(Call<Client> call, Response<Client> response) {
-                            if (true) {
+
                                 if (response.body() == null) {
                                     if (pass1.equals(pass2)) {
                                         Geocoder geocoder = new Geocoder(getContext(), new Locale("ru", "RU"));
                                         try {
-                                            List<Address> addresses = geocoder.getFromLocationName(city + ", Россия", 5);
+                                            List<Address> addresses = geocoder.getFromLocationName(city + ", Россия", 1);
                                             if (addresses == null || addresses.isEmpty()) {
                                                 Log.i("Geocoder", "Город не найден: " + city);
                                                 Toast.makeText(view.getContext(), "Город не поддерживается", Toast.LENGTH_LONG).show();
@@ -129,7 +129,7 @@ public class RegistrFragment extends Fragment {
                                                             SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("id_user", Context.MODE_PRIVATE);
                                                             sharedPreferences.edit().putLong("user_id", databaseHelper.getUserIdByLogin(login)).apply();
                                                             Bundle bundle = new Bundle();
-                                                            bundle.putLong("id_user", databaseHelper.getUserIdByLogin(login));
+                                                            bundle.putLong("id_user", response.body().getId());
                                                             navController.navigate(R.id.profilfragment, bundle);
                                                         } else {
                                                             Toast.makeText(view.getContext(), "Ошибка при добавлении клиента", Toast.LENGTH_LONG).show();
@@ -152,18 +152,52 @@ public class RegistrFragment extends Fragment {
                                 } else {
                                     Toast.makeText(view.getContext(), "Логин уже занят", Toast.LENGTH_LONG).show();
                                 }
-                            } else {
-                                Toast.makeText(view.getContext(), "Ошибка при проверке логина", Toast.LENGTH_LONG).show();
-                            }
                         }
 
                         @Override
                         public void onFailure(Call<Client> call, Throwable t) {
-                            Log.e("Z", t.getMessage());
-                            Toast.makeText(view.getContext(), "Проверьте интернет соединение", Toast.LENGTH_LONG).show();
+                            if (pass1.equals(pass2)) {
+                                Geocoder geocoder = new Geocoder(getContext(), new Locale("ru", "RU"));
+                                try {
+                                    List<Address> addresses = geocoder.getFromLocationName(city + ", Россия", 1);
+                                    if (addresses == null || addresses.isEmpty()) {
+                                        Log.i("Geocoder", "Город не найден: " + city);
+                                        Toast.makeText(view.getContext(), "Город не поддерживается", Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Client client = new Client(login, pass1, city, user_name);
+                                        ApiClient.Users.getService().addClient(client).enqueue(new Callback<Client>() {
+                                            @Override
+                                            public void onResponse(Call<Client> call, Response<Client> response) {
+                                                if (response.body() != null) {
+                                                    SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("id_user", Context.MODE_PRIVATE);
+                                                    sharedPreferences.edit().putLong("user_id", databaseHelper.getUserIdByLogin(login)).apply();
+                                                    Bundle bundle = new Bundle();
+                                                    bundle.putLong("id_user", response.body().getId());
+                                                    navController.navigate(R.id.profilfragment, bundle);
+                                                } else {
+                                                    Toast.makeText(view.getContext(), "Ошибка при добавлении клиента", Toast.LENGTH_LONG).show();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<Client> call, Throwable t) {
+                                                Toast.makeText(view.getContext(), "Проверьте интернет соединение", Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                                    }
+                                } catch (IOException e) {
+                                    Log.e("Geocoder", "Ошибка геокодирования", e);
+                                    Toast.makeText(view.getContext(), "Ошибка геокодирования", Toast.LENGTH_LONG).show();
+                                }
+                            } else {
+                                Toast.makeText(view.getContext(), "Пароли не совпадают", Toast.LENGTH_LONG).show();
+                            }
+
+
+
                         }
                     });
                 }
-        }});
+            }});
     }
 }

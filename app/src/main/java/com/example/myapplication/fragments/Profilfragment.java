@@ -1,5 +1,6 @@
 package com.example.myapplication.fragments;
 
+import static android.widget.Toast.LENGTH_LONG;
 import static com.example.myapplication.R.drawable.star_empty;
 
 import android.annotation.SuppressLint;
@@ -56,6 +57,8 @@ public class Profilfragment extends Fragment {
     private ImageView goAwayImg;
     private AppCompatButton myProfilbt;
     private AppCompatButton editProfilbt;
+    private String user_name_1;
+    private double stars_vvalue;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,10 +74,26 @@ public class Profilfragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         long id = getArguments().getLong("id_user", -1);
-        dbHelper = new DatabaseHelper(getContext());
+        System.out.println(id);
+        ApiClient.Users.getService().getClientById(id).enqueue(new Callback<Client>() {
+            @Override
+            public void onResponse(Call<Client> call, Response<Client> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    user_name_1 = response.body().getUsername();
+                    stars_vvalue = response.body().getStarsvalue();
+                }
+
+            }
+            @Override
+            public void onFailure(Call<Client> call, Throwable t) {
+                Log.e("Error", t.getMessage());
+
+            }
+        });
         @SuppressLint("ResourceType") NavController navController = Navigation.findNavController(view);
-        double stars_vvalue = dbHelper.getUserStarsById(id);
+
         starsValue = view.findViewById(R.id.profil_stars);
         starsValue.setText("(" + stars_vvalue + ")");
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("id_user", Context.MODE_PRIVATE);
@@ -97,9 +116,6 @@ public class Profilfragment extends Fragment {
                 stars[i].setImageResource(R.drawable.star_half);
             } else stars[i].setBackground(null);
         }
-
-
-        String user_name_1 = dbHelper.getUsernameById(id);
         user_name.setText(user_name_1);
         goAwayImg = view.findViewById(R.id.profil_out);
         toMapBt = view.findViewById(R.id.my_city_bt);
@@ -174,7 +190,7 @@ public class Profilfragment extends Fragment {
                                 String new_city_str = new_city.getText().toString().trim();
                                 Geocoder geocoder = new Geocoder(getContext(), new Locale("ru", "RU"));
                                 try {
-                                    List<Address> addresses = geocoder.getFromLocationName(new_city_str + ", Россия", 5);
+                                    List<Address> addresses = geocoder.getFromLocationName(new_city_str + ", Россия", 1);
                                     if (addresses == null || addresses.isEmpty()) {
                                         help_text.setText("Город не поддерживарется");
                                     }
@@ -184,14 +200,14 @@ public class Profilfragment extends Fragment {
                                             @Override
                                             public void onResponse(Call<Client> call, Response<Client> response) {
                                                 if(response.isSuccessful()) {
-                                                    Toast.makeText(dialog3.getContext(), "Данные обновленны", Toast.LENGTH_LONG).show();
+                                                    Toast.makeText(dialog3.getContext(), "Данные обновленны", LENGTH_LONG).show();
                                                     dialog3.dismiss();
                                                 }
                                             }
 
                                             @Override
                                             public void onFailure(Call<Client> call, Throwable t) {
-                                                Toast.makeText(view.getContext(), "Проверьте интернет соединение", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(view.getContext(), "Проверьте интернет соединение", LENGTH_LONG).show();
                                                 dialog3.dismiss();
                                             }
                                         });
@@ -231,14 +247,14 @@ public class Profilfragment extends Fragment {
                                     @Override
                                     public void onResponse(Call<Client> call, Response<Client> response) {
                                         if(response.isSuccessful()) {
-                                            Toast.makeText(dialog2.getContext(), "Данные обновленны", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(dialog2.getContext(), "Данные обновленны", LENGTH_LONG).show();
                                             dialog2.dismiss();
                                         }
                                     }
 
                                     @Override
                                     public void onFailure(Call<Client> call, Throwable t) {
-                                        Toast.makeText(view.getContext(), "Проверьте интернет соединение", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(view.getContext(), "Проверьте интернет соединение", LENGTH_LONG).show();
                                         dialog2.dismiss();
                                     }
                                 });
@@ -272,29 +288,34 @@ public class Profilfragment extends Fragment {
                                 ApiClient.Users.getService().getClientByLogin(new_login_str).enqueue(new Callback<Client>() {
                                     @Override
                                     public void onResponse(Call<Client> call, Response<Client> response) {
-                                        if(response.isSuccessful() && response.body() == null) {
+                                        if(response.body() == null) {
                                             ApiClient.Users.getService().updateClient(client).enqueue(new Callback<Client>() {
                                                 @Override
                                                 public void onResponse(Call<Client> call, Response<Client> response) {
-                                                    Toast.makeText(dialog1.getContext(), "Данные обновленны", Toast.LENGTH_LONG).show();
-                                                    dialog1.dismiss();
+                                                    if (response.isSuccessful() && response.body() != null){
+                                                        Toast.makeText(dialog1.getContext(), "Данные обновленны", LENGTH_LONG).show();
+                                                        dialog1.dismiss();
+
+                                                    }
 
 
                                                 }
 
                                                 @Override
                                                 public void onFailure(Call<Client> call, Throwable t) {
-                                                    Toast.makeText(view.getContext(), "Проверьте интернет соединение", Toast.LENGTH_LONG).show();
+                                                    Toast.makeText(view.getContext(), "Проверьте интернет соединение", LENGTH_LONG).show();
                                                     dialog1.dismiss();
 
                                                 }
                                             });
+                                        }else {
+                                            Toast.makeText(getContext(), "Логин занят", LENGTH_LONG).show();
                                         }
                                     }
 
                                     @Override
                                     public void onFailure(Call<Client> call, Throwable t) {
-                                        Toast.makeText(view.getContext(), "Проверьте интернет соединение", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(view.getContext(), "Проверьте интернет соединение", LENGTH_LONG).show();
                                         dialog1.dismiss();
 
                                     }

@@ -22,6 +22,14 @@ public  class Client{
     @SerializedName("password")
     private String password;
 
+    public Client(String login, String city, double starsvalue, String username, String password) {
+        this.login = login;
+        this.city = city;
+        this.starsvalue = starsvalue;
+        this.username = username;
+        this.password = password;
+    }
+
     public Client(String login, String password, String city, String username) {
         this.login = login;
         this.password = password;

@@ -1,5 +1,7 @@
 package com.example.myapplication.fragments;
 
+import static android.widget.Toast.LENGTH_LONG;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -20,10 +22,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.myapplication.R;
 import com.example.myapplication.db.DatabaseHelper;
+import com.example.myapplication.domain.Client;
 import com.example.myapplication.domain.Event;
+import com.example.myapplication.res.ApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -39,6 +44,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MapsFragment extends Fragment{
     private FusedLocationProviderClient fusedLocationClient;
 
@@ -49,6 +58,7 @@ public class MapsFragment extends Fragment{
     private ImageView imghome;
     private ImageView event_lst;
     private ImageView img_add_event;
+    private ArrayList<Event> events;
     private ImageView img_lsstt_event;
 
 
@@ -69,7 +79,19 @@ public class MapsFragment extends Fragment{
             }
             if (isTouch) {
                 long user_id = getArguments().getLong("id_user", -1);
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(getCityLatLng(getContext(), databaseHelper.getUserCityById(user_id)), 10));
+                ApiClient.Users.getService().getClientById(user_id).enqueue(new Callback<Client>() {
+                    @Override
+                    public void onResponse(Call<Client> call, Response<Client> response) {
+                        if(response.body() != null && response.isSuccessful()) googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(getCityLatLng(getContext(), response.body().getCity()), 10));
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<Client> call, Throwable t) {
+                        Toast.makeText(getContext(), "Проверьте интернет соединение", LENGTH_LONG).show();
+
+                    }
+                });
             }
             try {
                 googleMap.setMyLocationEnabled(true);
@@ -77,23 +99,43 @@ public class MapsFragment extends Fragment{
                         .addOnSuccessListener(location -> {
                             long user_id = getArguments().getLong("id_user", -1);
                             if (location != null) {
-
                                 LatLng userLatLng = new LatLng(location.getLatitude(), location.getLongitude());
                                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 15));
                             }
                             else {
-                                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(getCityLatLng(getContext(), databaseHelper.getUserCityById(user_id)), 10));
+                                ApiClient.Users.getService().getClientById(user_id).enqueue(new Callback<Client>() {
+                                    @Override
+                                    public void onResponse(Call<Client> call, Response<Client> response) {
+                                        if(response.body() != null && response.isSuccessful()) googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(getCityLatLng(getContext(), response.body().getCity()), 10));
+
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Client> call, Throwable t) {
+                                        Toast.makeText(getContext(), "Проверьте интернет соединение", LENGTH_LONG).show();
+
+                                    }
+                                });
                             }
                         });
             } catch (Exception e) {
                 Log.e("CannotSetMyLocation", e.getMessage());
             }
-            ArrayList<Event> events = databaseHelper.getAllEvents();
+            ApiClient.Events.getService().getAllEvents().enqueue(new Callback<ArrayList<Event>>() {
+                @Override
+                public void onResponse(Call<ArrayList<Event>> call, Response<ArrayList<Event>> response) {
+                    if(response.isSuccessful() && response.body() != null) events = databaseHelper.getAllEvents();
+                }
+                @Override
+                public void onFailure(Call<ArrayList<Event>> call, Throwable t) {
+                    Toast.makeText(getContext(), "Проверьте интернет соединение", LENGTH_LONG).show();
+
+                }
+            });
             try {
                 for (int i = 0; i < events.size(); i++) {
                     try {
                         LatLng latLng = getLocationFromAddress(events.get(i).getEventLocation(), googleMap);
-                        System.out.println(latLng);
                         googleMap.addMarker(new MarkerOptions().position(latLng).title(events.get(i).getEventLocation()));
                     } catch (Exception e) {
                         throw new RuntimeException(e);

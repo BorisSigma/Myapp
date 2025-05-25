@@ -82,6 +82,7 @@ public class LoginFragment extends Fragment { ;
                 if (login.isEmpty() || pass.isEmpty()) {
                     Toast.makeText(view.getContext(), "Введите логин и пароль", Toast.LENGTH_LONG).show();
                 }
+
                 else {
                     ApiClient.Users.getService().getClientByLogin(login).enqueue(new Callback<Client>() {
                         @Override
@@ -89,9 +90,10 @@ public class LoginFragment extends Fragment { ;
                             if(response.body() != null){
                                 if(response.body().getPassword().equals(pass)){
                                     SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("id_user", Context.MODE_PRIVATE);
-                                    sharedPreferences.edit().putLong("user_id", databaseHelper.getUserIdByLogin(login)).apply();
+                                    sharedPreferences.edit().putLong("user_id", response.body().getId()).apply();
                                     Bundle bundle = new Bundle();
-                                    bundle.putLong("id_user", databaseHelper.getUserIdByLogin(login));
+                                    System.out.println(response.body().getId());
+                                    bundle.putLong("id_user", response.body().getId());
                                     navController.navigate(R.id.profilfragment, bundle);
 
                                 }
@@ -106,8 +108,7 @@ public class LoginFragment extends Fragment { ;
 
                         @Override
                         public void onFailure(Call<Client> call, Throwable t) {
-                            Log.e("Z", t.getMessage());
-                            Toast.makeText(view.getContext(), "Ошибка на сервере", Toast.LENGTH_LONG).show();
+                            Toast.makeText(view.getContext(), "Логин или пароль введен не верно", Toast.LENGTH_LONG).show();
 
                         }
                     });
