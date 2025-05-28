@@ -13,21 +13,23 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface EventApiService {
-    @GET("/event/{id}")
+    @GET("event/{id}")
     Call<Event> getEventById(@Path("id") long id);
 
-    @GET("/event")
+    @GET("event")
     Call<ArrayList<Event>> getAllEvents();
 
-    @PUT("/event")
+    @PUT("event")
     Call<Event> updateEvent(@Body Event event);
+    @GET("event/loc/{eventLocation}")
+    Call<Event> getEventByLatLng(@Path("eventLocation") String eventLocation);
 
-    @POST("/event")
+    @POST("event")
     Call<Event> addEvent(@Body Event event);
 
-    @DELETE("/event/{id}")
+    @DELETE("event/{id}")
     Call<Void> deleteEventById(@Path("id") long id);
 
-    @GET("/event/{category}")
+    @GET("event/cat/{category}")
     Call<ArrayList<Event>> getEventsByCategory(@Path("category") String category);
 }

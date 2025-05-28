@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -41,7 +42,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
-import com.example.myapplication.db.DatabaseHelper;
 import com.example.myapplication.domain.Client;
 import com.example.myapplication.domain.Event;
 import com.example.myapplication.res.ApiClient;
@@ -52,6 +52,9 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
@@ -72,7 +75,6 @@ public class BlankFragment extends Fragment {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
 
     private ImageView photoEvent, addPhoto, back;
-    private DatabaseHelper databaseHelper;
     private String publicUrl;
     private ActivityResultLauncher<Intent> cameraLauncher;
     private OkHttpClient client = new OkHttpClient();
@@ -98,7 +100,6 @@ public class BlankFragment extends Fragment {
         @SuppressLint("ResourceType") NavController navController = Navigation.findNavController(view);
         addPhoto = view.findViewById(R.id.add_photo);
         long id = getArguments().getLong("id_user", -1);
-        databaseHelper = new DatabaseHelper(getContext());
         AppCompatButton addEventBt = view.findViewById(R.id.event_add_event);
         back = view.findViewById(R.id.event_add_back);
         back.setOnClickListener(new View.OnClickListener() {
@@ -208,21 +209,46 @@ public class BlankFragment extends Fragment {
                                 @Override
                                 public void onResponse(retrofit2.Call<Client> call, retrofit2.Response<Client> response) {
                                     if(response.isSuccessful() && response.body() != null){
-                                        Event event = new Event(id, name, disc, userLatLng, cat, url ,response.body().getUsername());
-                                        ApiClient.Events.getService().addEvent(event).enqueue(new retrofit2.Callback<Event>() {
+                                        ApiClient.Users.getService().getClientById(id).enqueue(new retrofit2.Callback<Client>() {
                                             @Override
-                                            public void onResponse(retrofit2.Call<Event> call, retrofit2.Response<Event> response) {
-                                                if(response.isSuccessful() && response.body() != null){
-                                                    Bundle bundle = new Bundle();
-                                                    bundle.putLong("id_user", id);
-                                                    navController.navigate(R.id.mapsFragment, bundle);
+                                            public void onResponse(retrofit2.Call<Client> call, retrofit2.Response<Client> response) {
+                                                LocalDateTime now = null;
+                                                String time = null;
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                    now = LocalDateTime.now();
                                                 }
+                                                DateTimeFormatter formatter = null;
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                    formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+                                                }
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                    time = now.format(formatter);
+                                                }
+                                                System.out.println(response.body().toString());
+                                                Event event = new Event(response.body(), name, disc, userLatLng, cat, url ,response.body().getUsername(), time);
+                                                ApiClient.Events.getService().addEvent(event).enqueue(new retrofit2.Callback<Event>() {
+                                                    @Override
+                                                    public void onResponse(retrofit2.Call<Event> call, retrofit2.Response<Event> response) {
+                                                        if(response.isSuccessful() && response.body() != null){
+                                                            Log.e("Error", response.body().toString());
+                                                            Bundle bundle = new Bundle();
+                                                            bundle.putLong("id_user", id);
+                                                            navController.navigate(R.id.mapsFragment, bundle);
+                                                        }
+
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(retrofit2.Call<Event> call, Throwable t) {
+                                                        Toast.makeText(view.getContext(), "Проверьте интернет соединение", LENGTH_LONG).show();
+
+                                                    }
+                                                });
 
                                             }
 
                                             @Override
-                                            public void onFailure(retrofit2.Call<Event> call, Throwable t) {
-                                                Toast.makeText(view.getContext(), "Проверьте интернет соединение", LENGTH_LONG).show();
+                                            public void onFailure(retrofit2.Call<Client> call, Throwable t) {
 
                                             }
                                         });

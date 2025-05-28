@@ -27,17 +27,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myapplication.R;
-import com.example.myapplication.db.DatabaseHelper;
+import com.example.myapplication.domain.Client;
+import com.example.myapplication.domain.Event;
+import com.example.myapplication.res.ApiClient;
 import com.squareup.picasso.Picasso;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class Eventcheck extends Fragment {
     private ImageView imageView;
     private AppCompatButton stars_up, stars_down;
-    private DatabaseHelper databaseHelper;
     private TextView name_event;
     private TextView event_description;
     private TextView event_categary;
@@ -60,7 +65,6 @@ public class Eventcheck extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        databaseHelper = new DatabaseHelper(getContext());
         @SuppressLint("ResourceType") NavController navController = Navigation.findNavController(view);
         long event_id = getArguments().getLong("id_event", -1);
         long user_id_1 = getArguments().getLong("id_user", -1);
@@ -91,85 +95,93 @@ public class Eventcheck extends Fragment {
 
             }
         });
-        ExecutorService executor = Executors.newSingleThreadExecutor();
         stars_down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(databaseHelper.getUserIdByEventId(event_id) == user_id_1){
-                    Toast.makeText(getContext(), "Вы не можете оценивать свои события", LENGTH_LONG).show();
-                }
-                else {
-                    double currentEventStars = databaseHelper.getEventStarsValue(event_id);
-                    if(currentEventStars >= 0.25f) {
-                        double newEventValue = currentEventStars - 0.25f;
-                        databaseHelper.updateEventStars(event_id, String.valueOf(newEventValue));
-                        event_stars_value.setText(String.format("%.2f", newEventValue));
-                        long userId = databaseHelper.getUserIdByEventId(event_id);
-                        double currentUserStars = databaseHelper.getUserStarsById(userId);
-                        if(currentUserStars >= 0.2f) {
-                            double newUserValue = (Math.round((currentUserStars - 0.1f) * 10) / 10.0);
-                            databaseHelper.updateUserStars(userId, String.valueOf(newUserValue));
-                            user_stars_value.setText(String.format("%.1f", newUserValue));
-                        } else {
-                            databaseHelper.updateUserStars(userId, String.valueOf(0.0f));
-                            user_stars_value.setText("0.0");
-                            Toast.makeText(getContext(), "Пользователь будет скоро удален", Toast.LENGTH_SHORT).show();
+                ApiClient.Events.getService().getEventById(event_id).enqueue(new Callback<Event>() {
+                    @Override
+                    public void onResponse(Call<Event> call, Response<Event> response) {
+                        if(response.body() != null && response.isSuccessful()){
+                            if(response.body().getId() == user_id_1){
+                                Toast.makeText(getContext(), "Вы не можете оценивать свои события", LENGTH_LONG).show();
+                            }
+                            else {
+                                double currentEventStars = response.body().getEvent_stars_value();
+                                if (currentEventStars >= 0.25f) {
+                                    double newEventValue = currentEventStars - 0.25f;
+                                    Event event = response.body();
+                                    event.setEvent_stars_value(newEventValue);
+                                    ApiClient.Events.getService().updateEvent(event).enqueue(new Callback<Event>() {
+                                        @Override
+                                        public void onResponse(Call<Event> call, Response<Event> response) {
+                                            if(response.isSuccessful()){
+                                                event_stars_value.setText(String.valueOf(response.body().getEvent_stars_value()));
+                                                Client client = response.body().getClient();
+                                                if(client.getStarsValue() >= 0.1f){
+                                                    client.setStarsValue(client.getStarsValue() - 0.1);
+                                                    ApiClient.Users.getService().updateClient(client).enqueue(new Callback<Client>() {
+                                                        @Override
+                                                        public void onResponse(Call<Client> call, Response<Client> response) {
+                                                            if(response.isSuccessful()){
+                                                                user_stars_value.setText(String.valueOf(response.body().getStarsValue()));
+
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onFailure(Call<Client> call, Throwable t) {
+
+                                                        }
+                                                    });
+                                                }
+                                                else {
+                                                    Toast.makeText(getContext(), "Пользователь скоро будет удален", LENGTH_LONG).show();
+                                                }
+
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<Event> call, Throwable t) {
+
+                                        }
+                                    });
+                                }
+                                else {
+                                    Toast.makeText(getContext(), "Пользователь скоро будет удален", LENGTH_LONG).show();
+                                }
+
+                            }
+
                         }
                     }
 
-                }
-            }
-        });
+                    @Override
+                    public void onFailure(Call<Event> call, Throwable t) {
 
-        stars_up.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(databaseHelper.getUserIdByEventId(event_id) == user_id_1){
-                    Toast.makeText(getContext(), "Вы не можете оценивать свои события", LENGTH_LONG).show();
-                }
-                else {
-                    double currentEventStars = databaseHelper.getEventStarsValue(event_id);
-                    double newEventValue = currentEventStars;
-
-                    if (currentEventStars <= 4.75f) {
-                        newEventValue = currentEventStars + 0.25f;
-                    } else {
-                        newEventValue = 5.0f;
                     }
-
-                    databaseHelper.updateEventStars(event_id, String.valueOf(newEventValue));
-                    event_stars_value.setText(String.format("%.2f", newEventValue));
-                    long userId = databaseHelper.getUserIdByEventId(event_id);
-                    double currentUserStars = databaseHelper.getUserStarsById(userId);
-
-                    if (currentUserStars <= 4.9f) {
-                        double newUserValue = (Math.round((currentUserStars + 0.1f) * 10) / 10.0);
-                        databaseHelper.updateUserStars(userId, String.valueOf(newUserValue));
-                        user_stars_value.setText(String.format("%.1f", newUserValue));
-                    } else {
-                        databaseHelper.updateUserStars(userId, String.valueOf(5.0f));
-                        user_stars_value.setText("5.0");
-                    }
-                }
+                });
             }
         });
-
-        Picasso.get().load(databaseHelper.getEventUrlById(event_id)).into(imageView);
-        executor.execute(new Runnable() {
+        ApiClient.Events.getService().getEventById(event_id).enqueue(new Callback<Event>() {
             @Override
-            public void run() {
-                name_event.setText(databaseHelper.getEventNameById(event_id));
-                evnet_time.setText(databaseHelper.getEventTimestampById(event_id));
-                event_description.setText(databaseHelper.getEventDescriptionById(event_id));
-                event_categary.setText(databaseHelper.getEventCategoryById(event_id));
-                event_stars_value.setText(String.valueOf(databaseHelper.getEventStarsValue(event_id)));
-                user_name.setText(databaseHelper.getUsernameById(user_id_1));
-                user_stars_value.setText(String.valueOf(databaseHelper.getUserStarsById(user_id_1)));
-
+            public void onResponse(Call<Event> call, Response<Event> response) {
+                Picasso.get().load(response.body().getEventUrl()).into(imageView);
+                name_event.setText(response.body().getEventName());
+                System.out.println(response.body().getId());
+                evnet_time.setText(response.body().getEvent_time());
+                event_description.setText(response.body().getEventDescription());
+                event_categary.setText(response.body().getCategory());
+                event_stars_value.setText(String.valueOf(response.body().getEvent_stars_value()));
+                Client client = response.body().getClient();
+                user_name.setText(client.getUsername());
+                user_stars_value.setText(String.valueOf(client.getStarsValue()));
             }
+            @Override
+            public void onFailure(Call<Event> call, Throwable t) {
+                System.out.println(t.getMessage());}
         });
-
-
-
     }
+
+
 }

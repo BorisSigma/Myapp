@@ -63,9 +63,10 @@
             android:hint="Добавьте название"
             android:padding="2dp"
             android:gravity="center"
+            android:layout_marginRight="40dp"
             android:background="@drawable/mybt3"
             android:layout_marginTop="40dp"
-            android:layout_marginLeft="60dp"
+            android:layout_marginLeft="40dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/event_chek_n_add" />
         <TextView
@@ -80,14 +81,16 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/event_add_event_category"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="60dp"
             android:layout_marginTop="48dp"
+            android:layout_marginRight="40dp"
             android:background="@drawable/mybt3"
             android:gravity="center"
             android:hint="Добавьте категорию"
             android:padding="2dp"
+            android:layout_marginLeft="40dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/event_chek_c_add" />
 
@@ -106,11 +109,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
-            android:layout_marginLeft="60dp"
+            android:layout_marginLeft="40dp"
             android:hint="Добавьте описание"
             android:background="@drawable/mybt3"
             android:singleLine="false"
             android:padding="2dp"
+            android:layout_marginRight="40dp"
             android:gravity="center"
             android:breakStrategy="simple"
             android:hyphenationFrequency="full"

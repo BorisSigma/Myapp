@@ -15,8 +15,8 @@ public  class Client{
     private String login;
     @SerializedName("city")
     private String city;
-    @SerializedName("starsvalue")
-    private double starsvalue;
+    @SerializedName("starsValue")
+    private double starsValue;
     @SerializedName("username")
     private String username;
     @SerializedName("password")
@@ -25,7 +25,7 @@ public  class Client{
     public Client(String login, String city, double starsvalue, String username, String password) {
         this.login = login;
         this.city = city;
-        this.starsvalue = starsvalue;
+        this.starsValue = starsvalue;
         this.username = username;
         this.password = password;
     }
@@ -35,16 +35,28 @@ public  class Client{
         this.password = password;
         this.city = city;
         this.username = username;
-        this.starsvalue = 5.0;
+        this.starsValue = 5.0;
     }
     public Client(long id, String login, String city, double starsvalue,
                   String username, String password) {
         this.id = id;
         this.login = login;
         this.city = city;
-        this.starsvalue = starsvalue;
+        this.starsValue = starsvalue;
         this.username = username;
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "id=" + id +
+                ", login='" + login + '\'' +
+                ", city='" + city + '\'' +
+                ", starsValue=" + starsValue +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 
     public long getId() {
@@ -59,8 +71,8 @@ public  class Client{
         return city;
     }
 
-    public double getStarsvalue() {
-        return starsvalue;
+    public double getStarsValue() {
+        return starsValue;
     }
 
     public String getUsername() {
@@ -85,7 +97,7 @@ public  class Client{
     }
 
     public void setStarsValue(double starsvalue) {
-        this.starsvalue = starsvalue;
+        this.starsValue = starsvalue;
     }
 
     public void setUsername(String username) {

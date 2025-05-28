@@ -11,6 +11,12 @@
         android:layout_height="match_parent"
         android:paddingBottom="40dp">
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.89" />
         <ImageView
             android:id="@+id/event_chek_back"
             android:layout_width="60dp"
@@ -120,12 +126,14 @@
             android:id="@+id/event_chek_event_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
             android:layout_marginLeft="60dp"
-            android:text="Описание"
-            android:singleLine="false"
+            android:layout_marginTop="40dp"
             android:breakStrategy="simple"
             android:hyphenationFrequency="full"
+            android:singleLine="false"
+            android:text="Описание"
+            android:layout_marginRight="60dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/event_chek_d" />
 

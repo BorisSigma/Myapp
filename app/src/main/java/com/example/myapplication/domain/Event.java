@@ -5,13 +5,15 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.processing.Generated;
+
 @Entity(tableName = "events")
 public class Event {
     @PrimaryKey
     @SerializedName("id")
     private long id;
-    @SerializedName("userId")
-    private long userId;
+    @SerializedName("user_id")
+    private final Client client;
     @SerializedName("eventName")
     private String eventName;
     @SerializedName("eventDescription")
@@ -26,20 +28,11 @@ public class Event {
     private String eventUsername;
     @SerializedName("event_stars_value")
     private double event_stars_value;
+    @SerializedName("event_time")
+    private String event_time;
 
-    public Event(long userId, String eventName, String eventDescription, String eventLocation, String category, String eventUrl, String eventUsername) {
-        this.userId = userId;
-        this.eventName = eventName;
-        this.eventDescription = eventDescription;
-        this.eventLocation = eventLocation;
-        this.category = category;
-        this.eventUrl = eventUrl;
-        this.eventUsername = eventUsername;
-        this.event_stars_value = 5.0;
-    }
-    public Event(long id,long userId, String eventName, String eventDescription, String eventLocation, String category, String eventUrl, String eventUsername, double event_stars_value) {
-        this.id = id;
-        this.userId = userId;
+    public Event(Client client, String eventName, String eventDescription, String eventLocation, String category, String eventUrl, String eventUsername, double event_stars_value, String event_time) {
+        this.client = client;
         this.eventName = eventName;
         this.eventDescription = eventDescription;
         this.eventLocation = eventLocation;
@@ -47,15 +40,53 @@ public class Event {
         this.eventUrl = eventUrl;
         this.eventUsername = eventUsername;
         this.event_stars_value = event_stars_value;
+        this.event_time = event_time;
+    }
+    public Event(Client client, String eventName, String eventDescription, String eventLocation, String category, String eventUrl, String eventUsername, String event_time) {
+        this.client = client;
+        this.eventName = eventName;
+        this.eventDescription = eventDescription;
+        this.eventLocation = eventLocation;
+        this.category = category;
+        this.eventUrl = eventUrl;
+        this.eventUsername = eventUsername;
+        this.event_stars_value = 5.0;
+        this.event_time = event_time;
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "id=" + id +
+                ", client=" + client +
+                ", eventName='" + eventName + '\'' +
+                ", eventDescription='" + eventDescription + '\'' +
+                ", eventLocation='" + eventLocation + '\'' +
+                ", category='" + category + '\'' +
+                ", eventUrl='" + eventUrl + '\'' +
+                ", eventUsername='" + eventUsername + '\'' +
+                ", event_stars_value=" + event_stars_value +
+                ", event_time='" + event_time + '\'' +
+                '}';
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public String getEvent_time() {
+        return event_time;
+    }
+
+    public void setEvent_time(String event_time) {
+        this.event_time = event_time;
     }
 
     public long getId() {
         return id;
     }
 
-    public long getUserId() {
-        return userId;
-    }
+
 
     public String getEventName() {
         return eventName;
@@ -89,9 +120,7 @@ public class Event {
         this.id = id;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
+
 
     public void setEventName(String eventName) {
         this.eventName = eventName;

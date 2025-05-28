@@ -19,7 +19,6 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.db.DatabaseHelper;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
 
     private LayoutInflater inflater;
     private ArrayList<Event> events;
-    private DatabaseHelper databaseHelper;
     private Context context;
 
     private AdapterView.OnItemClickListener listener;
@@ -60,10 +58,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
     public void onBindViewHolder(@NonNull EventAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Event event = events.get(position);
 
-        databaseHelper = new DatabaseHelper(context);
-        holder.time.setText(databaseHelper.getEventTimestampById(event.getId()));
+        holder.time.setText(event.getEvent_time());
         holder.name.setText(event.getEventName());
-        Picasso.get().load(databaseHelper.getEventUrlById(event.getId())).into(holder.image);
+        Picasso.get().load(event.getEventUrl()).into(holder.image);
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

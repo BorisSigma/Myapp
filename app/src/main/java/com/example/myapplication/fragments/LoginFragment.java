@@ -24,7 +24,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.myapplication.R;
-import com.example.myapplication.db.DatabaseHelper;
 import com.example.myapplication.domain.Client;
 import com.example.myapplication.res.ApiClient;
 
@@ -34,7 +33,6 @@ import retrofit2.Response;
 
 
 public class LoginFragment extends Fragment { ;
-    private DatabaseHelper databaseHelper;
     private EditText loginEt;
     private EditText passwordEt;
     private AppCompatButton button;
@@ -62,7 +60,6 @@ public class LoginFragment extends Fragment { ;
         loginEt = view.findViewById(R.id.logo_in_login);
         passwordEt = view.findViewById(R.id.logo_in_pass);
         button = view.findViewById(R.id.bt_logo_in);
-        databaseHelper = new DatabaseHelper(getContext());
         ImageView eyes = view.findViewById(R.id.eyes1);
         eyes.setOnClickListener(new View.OnClickListener() {
             @Override

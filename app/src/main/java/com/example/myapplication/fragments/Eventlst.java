@@ -25,16 +25,19 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.db.DatabaseHelper;
 import com.example.myapplication.domain.Event;
 import com.example.myapplication.domain.EventAdapter;
+import com.example.myapplication.res.ApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class Eventlst extends Fragment {
-    private DatabaseHelper databaseHelper;
     private EventAdapter eventAdapter;
     private ImageView to_profil;
     private ImageView filter_image;
@@ -48,6 +51,7 @@ public class Eventlst extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_eventlst, container, false);
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -57,10 +61,19 @@ public class Eventlst extends Fragment {
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        databaseHelper = new DatabaseHelper(getContext());
         @SuppressLint("ResourceType") NavController navController = Navigation.findNavController(view);
-        eventAdapter = new EventAdapter(getContext(), databaseHelper.getAllEvents());
-        recyclerView.setAdapter(eventAdapter);
+        ApiClient.Events.getService().getAllEvents().enqueue(new Callback<ArrayList<Event>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Event>> call, Response<ArrayList<Event>> response) {
+                eventAdapter = new EventAdapter(getContext(), response.body());
+                recyclerView.setAdapter(eventAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Event>> call, Throwable t) {
+
+            }
+        });
         to_profil = view.findViewById(R.id.to_profil_event_lst);
         long id = getArguments().getLong("id_user", -1);
         to_profil.setOnClickListener(new View.OnClickListener() {
@@ -88,8 +101,18 @@ public class Eventlst extends Fragment {
                         if (checkedId == R.id.radioTransport) {
                             category = "Транспорт";
                         } else if (checkedId == R.id.radioAll) {
-                            eventAdapter = new EventAdapter(getContext(), databaseHelper.getAllEvents());
-                            recyclerView.setAdapter(eventAdapter);
+                            ApiClient.Events.getService().getAllEvents().enqueue(new Callback<ArrayList<Event>>() {
+                                @Override
+                                public void onResponse(Call<ArrayList<Event>> call, Response<ArrayList<Event>> response) {
+                                    eventAdapter = new EventAdapter(getContext(), response.body());
+                                    recyclerView.setAdapter(eventAdapter);
+                                }
+
+                                @Override
+                                public void onFailure(Call<ArrayList<Event>> call, Throwable t) {
+
+                                }
+                            });
                             return;
                         } else if (checkedId == R.id.radioSecurity) {
                             category = "Безопасность";
@@ -97,11 +120,18 @@ public class Eventlst extends Fragment {
                             category = "Коммуникации";
                         }
 
-                        eventAdapter = new EventAdapter(
-                                getContext(),
-                                databaseHelper.getEventsByCategory(category)
-                        );
-                        recyclerView.setAdapter(eventAdapter);
+                        ApiClient.Events.getService().getEventsByCategory(category).enqueue(new Callback<ArrayList<Event>>() {
+                            @Override
+                            public void onResponse(Call<ArrayList<Event>> call, Response<ArrayList<Event>> response) {
+                                eventAdapter = new EventAdapter(getContext(), response.body());
+                                recyclerView.setAdapter(eventAdapter);
+                            }
+
+                            @Override
+                            public void onFailure(Call<ArrayList<Event>> call, Throwable t) {
+
+                            }
+                        });
                     }
                 });
 
@@ -131,8 +161,18 @@ public class Eventlst extends Fragment {
                         if (checkedId == R.id.radioTransport) {
                             category = "Транспорт";
                         } else if (checkedId == R.id.radioAll) {
-                            eventAdapter = new EventAdapter(getContext(), databaseHelper.getAllEvents());
-                            recyclerView.setAdapter(eventAdapter);
+                            ApiClient.Events.getService().getAllEvents().enqueue(new Callback<ArrayList<Event>>() {
+                                @Override
+                                public void onResponse(Call<ArrayList<Event>> call, Response<ArrayList<Event>> response) {
+                                    eventAdapter = new EventAdapter(getContext(), response.body());
+                                    recyclerView.setAdapter(eventAdapter);
+                                }
+
+                                @Override
+                                public void onFailure(Call<ArrayList<Event>> call, Throwable t) {
+
+                                }
+                            });
                             return;
                         } else if (checkedId == R.id.radioSecurity) {
                             category = "Безопасность";
@@ -140,11 +180,18 @@ public class Eventlst extends Fragment {
                             category = "Коммуникации";
                         }
 
-                        eventAdapter = new EventAdapter(
-                                getContext(),
-                                databaseHelper.getEventsByCategory(category)
-                        );
-                        recyclerView.setAdapter(eventAdapter);
+                        ApiClient.Events.getService().getEventsByCategory(category).enqueue(new Callback<ArrayList<Event>>() {
+                            @Override
+                            public void onResponse(Call<ArrayList<Event>> call, Response<ArrayList<Event>> response) {
+                                eventAdapter = new EventAdapter(getContext(), response.body());
+                                recyclerView.setAdapter(eventAdapter);
+                            }
+
+                            @Override
+                            public void onFailure(Call<ArrayList<Event>> call, Throwable t) {
+
+                            }
+                        });
                     }
                 });
 
@@ -157,8 +204,7 @@ public class Eventlst extends Fragment {
                 }
                 dialog.show();
             }
+
         });
-
-
     }
 }

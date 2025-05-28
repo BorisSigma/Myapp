@@ -12,7 +12,6 @@ import androidx.navigation.Navigation;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -25,7 +24,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.myapplication.R;
-import com.example.myapplication.db.DatabaseHelper;
+
 import com.example.myapplication.domain.Client;
 import com.example.myapplication.domain.Event;
 import com.example.myapplication.res.ApiClient;
@@ -54,7 +53,6 @@ public class MapsFragment extends Fragment{
     private static boolean isTouch = false;
     private static LatLng firstLatLng =  new LatLng(55.751244, 37.618423);
     private static final int request_Code = 1;
-    private DatabaseHelper databaseHelper;
     private ImageView imghome;
     private ImageView event_lst;
     private ImageView img_add_event;
@@ -67,7 +65,6 @@ public class MapsFragment extends Fragment{
         @Override
         public void onMapReady(GoogleMap googleMap) {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
-            databaseHelper = new DatabaseHelper(getContext());
             FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
             if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
@@ -124,7 +121,55 @@ public class MapsFragment extends Fragment{
             ApiClient.Events.getService().getAllEvents().enqueue(new Callback<ArrayList<Event>>() {
                 @Override
                 public void onResponse(Call<ArrayList<Event>> call, Response<ArrayList<Event>> response) {
-                    if(response.isSuccessful() && response.body() != null) events = databaseHelper.getAllEvents();
+                    if(response.isSuccessful() && response.body() != null) {
+                        events = response.body();
+                        try {
+                            for (int i = 0; i < events.size(); i++) {
+                                try {
+                                    LatLng latLng = getLocationFromAddress(events.get(i).getEventLocation(), googleMap);
+                                    googleMap.addMarker(new MarkerOptions().position(latLng).title(events.get(i).getEventLocation()));
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                            }
+                            googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                                @Override
+                                public boolean onMarkerClick(@NonNull Marker marker) {
+                                    ApiClient.Events.getService().getEventByLatLng(marker.getTitle()).enqueue(new Callback<Event>() {
+                                        @Override
+                                        public void onResponse(Call<Event> call, Response<Event> response) {
+                                            if (response.isSuccessful() && response.body() != null){
+                                                long event_id = response.body().getId();
+                                                long user_id = getArguments().getLong("id_user", -1);
+                                                Bundle bundle1 = new Bundle();
+                                                bundle1.putLong("id_user", user_id);
+                                                bundle1.putLong("id_event", event_id);
+                                                bundle1.putInt("exit", 0);
+                                                @SuppressLint("ResourceType")
+                                                NavController navController = Navigation.findNavController(getView());
+                                                navController.navigate(R.id.eventcheck, bundle1);
+                                                isTouch = true;
+                                            }
+
+
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<Event> call, Throwable t) {
+
+
+                                        }
+                                    });
+                                    return true;
+
+                                }
+
+                            });
+                        } catch (Exception e) {
+                            Log.e("MAP LATLNG", e.getMessage());
+                        }
+                    }
                 }
                 @Override
                 public void onFailure(Call<ArrayList<Event>> call, Throwable t) {
@@ -132,35 +177,6 @@ public class MapsFragment extends Fragment{
 
                 }
             });
-            try {
-                for (int i = 0; i < events.size(); i++) {
-                    try {
-                        LatLng latLng = getLocationFromAddress(events.get(i).getEventLocation(), googleMap);
-                        googleMap.addMarker(new MarkerOptions().position(latLng).title(events.get(i).getEventLocation()));
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-
-                }
-                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(@NonNull Marker marker) {
-                        long event_id = databaseHelper.getEventIdByLocation(marker.getTitle());
-                        long user_id = getArguments().getLong("id_user", -1);
-                        Bundle bundle1 = new Bundle();
-                        bundle1.putLong("id_user", user_id);
-                        bundle1.putLong("id_event", event_id);
-                        bundle1.putInt("exit", 0);
-                        @SuppressLint("ResourceType")
-                        NavController navController = Navigation.findNavController(getView());
-                        navController.navigate(R.id.eventcheck, bundle1);
-                        isTouch = true;
-                        return true;
-                    }
-                });
-            } catch (Exception e) {
-                Log.e("MAP LATLNG", e.getMessage());
-            }
         }
     };
 

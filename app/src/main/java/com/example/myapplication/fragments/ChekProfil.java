@@ -18,14 +18,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.db.DatabaseHelper;
+import com.example.myapplication.domain.Client;
+import com.example.myapplication.res.ApiClient;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class ChekProfil extends Fragment {
-    private DatabaseHelper databaseHelper;
     private ImageView back_img;
     private TextView user_name;
     private TextView login;
@@ -56,7 +60,6 @@ public class ChekProfil extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         @SuppressLint("ResourceType")
         NavController navController = Navigation.findNavController(view);
-        databaseHelper = new DatabaseHelper(getContext());
         back_img = view.findViewById(R.id.profil_chek_back);
         user_name = view.findViewById(R.id.chek_profil_user_name);
         login = view.findViewById(R.id.profil_chek_login);
@@ -84,11 +87,23 @@ public class ChekProfil extends Fragment {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                user_name.setText(databaseHelper.getUsernameById(id));
-                login.setText(databaseHelper.getUserLoginById(id));
-                city.setText(databaseHelper.getUserCityById(id));
-                stars.setText(String.valueOf(databaseHelper.getUserStarsById(id)));
-                pass.setText(databaseHelper.getUserPasswordById(id));
+                ApiClient.Users.getService().getClientById(id).enqueue(new Callback<Client>() {
+                    @Override
+                    public void onResponse(Call<Client> call, Response<Client> response) {
+                        user_name.setText(response.body().getUsername());
+                        login.setText(response.body().getLogin());
+                        city.setText(response.body().getCity());
+                        stars.setText(String.valueOf(response.body().getStarsValue()));
+                        pass.setText(response.body().getPassword());
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<Client> call, Throwable t) {
+
+                    }
+                });
+
             }
         });
     }
