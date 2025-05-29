@@ -12,7 +12,7 @@ public class Event {
     @PrimaryKey
     @SerializedName("id")
     private long id;
-    @SerializedName("user_id")
+    @SerializedName("client")
     private final Client client;
     @SerializedName("eventName")
     private String eventName;
@@ -42,17 +42,7 @@ public class Event {
         this.event_stars_value = event_stars_value;
         this.event_time = event_time;
     }
-    public Event(Client client, String eventName, String eventDescription, String eventLocation, String category, String eventUrl, String eventUsername, String event_time) {
-        this.client = client;
-        this.eventName = eventName;
-        this.eventDescription = eventDescription;
-        this.eventLocation = eventLocation;
-        this.category = category;
-        this.eventUrl = eventUrl;
-        this.eventUsername = eventUsername;
-        this.event_stars_value = 5.0;
-        this.event_time = event_time;
-    }
+
 
     @Override
     public String toString() {

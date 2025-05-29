@@ -19,6 +19,7 @@ import androidx.navigation.Navigation;
 
 import android.text.Layout;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.domain.Client;
 import com.example.myapplication.domain.Event;
@@ -95,20 +97,99 @@ public class Eventcheck extends Fragment {
 
             }
         });
+
         stars_down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ApiClient.Events.getService().getEventById(event_id).enqueue(new Callback<Event>() {
                     @Override
                     public void onResponse(Call<Event> call, Response<Event> response) {
+                        if (response.body() != null && response.isSuccessful()) {
+                            Client client1 = response.body().getClient();
+                            if (client1.getId() == user_id_1) {
+                                Toast.makeText(getContext(), "Вы не можете оценивать свои события", LENGTH_LONG).show();
+                            } else {
+                                double currentEventStars = response.body().getEvent_stars_value();
+                                if (currentEventStars >= 0.25) {
+                                    double newEventValue = currentEventStars - 0.25;
+                                    Event event = response.body();
+                                    event.setEvent_stars_value(newEventValue);
+                                    ApiClient.Events.getService().updateEvent(event).enqueue(new Callback<Event>() {
+                                        @Override
+                                        public void onResponse(Call<Event> call, Response<Event> response) {
+                                            if (response.isSuccessful()) {
+                                                event_stars_value.setText(String.valueOf(response.body().getEvent_stars_value()));
+                                                Client client = response.body().getClient();
+                                                if (client.getStarsValue() >= 0.1) {
+                                                    double newClientStarsValue = client.getStarsValue() - 0.1;
+                                                    System.out.println(newClientStarsValue);
+                                                    client.setStarsValue(newClientStarsValue);
+                                                    System.out.println(client);
+                                                    ApiClient.Users.getService().updateClient(client).enqueue(new Callback<Client>() {
+                                                        @Override
+                                                        public void onResponse(Call<Client> call, Response<Client> response) {
+                                                            if (response.isSuccessful()) {
+                                                                System.out.println(response.body().toString());
+                                                                user_stars_value.setText(String.valueOf(response.body().getStarsValue()));
+                                                            } else {
+                                                                Log.e("Error", "Ошибка обновления пользователя: " + response.message());
+                                                                Toast.makeText(getContext(), "Ошибка обновления пользователя", LENGTH_LONG).show();
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onFailure(Call<Client> call, Throwable t) {
+                                                            Log.e("Error", "Ошибка сети при обновлении пользователя: " + t.getMessage());
+                                                            Toast.makeText(getContext(), "Ошибка сети при обновлении пользователя", LENGTH_LONG).show();
+                                                        }
+                                                    });
+                                                } else {
+                                                    Toast.makeText(getContext(), "Пользователь скоро будет удален", LENGTH_LONG).show();
+                                                }
+                                            } else {
+                                                Log.e("Error", "Ошибка обновления события: " + response.message());
+                                                Toast.makeText(getContext(), "Ошибка обновления события", LENGTH_LONG).show();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<Event> call, Throwable t) {
+                                            Log.e("Error", "Ошибка сети при обновлении события: " + t.getMessage());
+                                            Toast.makeText(getContext(), "Ошибка сети при обновлении события", LENGTH_LONG).show();
+                                        }
+                                    });
+                                } else {
+                                    Toast.makeText(getContext(), "Рейтинг события не может быть меньше 0", LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Event> call, Throwable t) {
+                        Log.e("Error", "Ошибка сети при получении события: " + t.getMessage());
+                        Toast.makeText(getContext(), "Ошибка сети при получении события", LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+
+
+        stars_up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ApiClient.Events.getService().getEventById(event_id).enqueue(new Callback<Event>() {
+                    @Override
+                    public void onResponse(Call<Event> call, Response<Event> response) {
                         if(response.body() != null && response.isSuccessful()){
-                            if(response.body().getId() == user_id_1){
+                            Client client1 = response.body().getClient();
+                            if (client1.getId() == user_id_1) {
                                 Toast.makeText(getContext(), "Вы не можете оценивать свои события", LENGTH_LONG).show();
                             }
                             else {
                                 double currentEventStars = response.body().getEvent_stars_value();
-                                if (currentEventStars >= 0.25f) {
-                                    double newEventValue = currentEventStars - 0.25f;
+                                if (currentEventStars <= 4.75) {
+                                    double newEventValue = currentEventStars + 0.25;
                                     Event event = response.body();
                                     event.setEvent_stars_value(newEventValue);
                                     ApiClient.Events.getService().updateEvent(event).enqueue(new Callback<Event>() {
@@ -117,8 +198,8 @@ public class Eventcheck extends Fragment {
                                             if(response.isSuccessful()){
                                                 event_stars_value.setText(String.valueOf(response.body().getEvent_stars_value()));
                                                 Client client = response.body().getClient();
-                                                if(client.getStarsValue() >= 0.1f){
-                                                    client.setStarsValue(client.getStarsValue() - 0.1);
+                                                if(client.getStarsValue() <= 4.9){
+                                                    client.setStarsValue(client.getStarsValue() + 0.1);
                                                     ApiClient.Users.getService().updateClient(client).enqueue(new Callback<Client>() {
                                                         @Override
                                                         public void onResponse(Call<Client> call, Response<Client> response) {
@@ -135,7 +216,7 @@ public class Eventcheck extends Fragment {
                                                     });
                                                 }
                                                 else {
-                                                    Toast.makeText(getContext(), "Пользователь скоро будет удален", LENGTH_LONG).show();
+                                                    event_stars_value.setText(String.valueOf(5.0));
                                                 }
 
                                             }
@@ -148,7 +229,8 @@ public class Eventcheck extends Fragment {
                                     });
                                 }
                                 else {
-                                    Toast.makeText(getContext(), "Пользователь скоро будет удален", LENGTH_LONG).show();
+                                    event_stars_value.setText(String.valueOf(5.0));
+
                                 }
 
                             }
@@ -163,10 +245,12 @@ public class Eventcheck extends Fragment {
                 });
             }
         });
+
+
         ApiClient.Events.getService().getEventById(event_id).enqueue(new Callback<Event>() {
             @Override
             public void onResponse(Call<Event> call, Response<Event> response) {
-                Picasso.get().load(response.body().getEventUrl()).into(imageView);
+                Glide.with(requireContext()).load(response.body().getEventUrl()).into(imageView);
                 name_event.setText(response.body().getEventName());
                 System.out.println(response.body().getId());
                 evnet_time.setText(response.body().getEvent_time());

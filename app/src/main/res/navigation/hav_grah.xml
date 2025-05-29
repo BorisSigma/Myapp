@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_blankFragment2_to_profilfragment"
             app:destination="@id/profilfragment" />
+        <action
+            android:id="@+id/action_blankFragment2_to_blankFragment"
+            app:destination="@id/blankFragment" />
     </fragment>
     <fragment
         android:id="@+id/blankFragment3"
@@ -37,6 +40,9 @@
         <action
             android:id="@+id/action_blankFragment3_to_profilfragment"
             app:destination="@id/profilfragment" />
+        <action
+            android:id="@+id/action_blankFragment3_to_blankFragment"
+            app:destination="@id/blankFragment" />
     </fragment>
     <fragment
         android:id="@+id/profilfragment"

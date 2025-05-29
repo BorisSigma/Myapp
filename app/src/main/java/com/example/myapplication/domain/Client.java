@@ -22,29 +22,22 @@ public  class Client{
     @SerializedName("password")
     private String password;
 
-    public Client(String login, String city, double starsvalue, String username, String password) {
-        this.login = login;
-        this.city = city;
-        this.starsValue = starsvalue;
-        this.username = username;
-        this.password = password;
-    }
 
-    public Client(String login, String password, String city, String username) {
+    public Client(String login, String password, String city, String username, double starsvalue) {
         this.login = login;
         this.password = password;
         this.city = city;
         this.username = username;
-        this.starsValue = 5.0;
+        this.starsValue = starsvalue;
     }
     public Client(long id, String login, String city, double starsvalue,
                   String username, String password) {
         this.id = id;
         this.login = login;
         this.city = city;
-        this.starsValue = starsvalue;
         this.username = username;
         this.password = password;
+        this.starsValue = starsvalue;
     }
 
     @Override

@@ -224,8 +224,8 @@ public class BlankFragment extends Fragment {
                                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                                     time = now.format(formatter);
                                                 }
-                                                System.out.println(response.body().toString());
-                                                Event event = new Event(response.body(), name, disc, userLatLng, cat, url ,response.body().getUsername(), time);
+                                                Log.e("Error", response.body().toString());
+                                                Event event = new Event(response.body(), name, disc, userLatLng, cat, url ,response.body().getUsername(), 5.0, time);
                                                 ApiClient.Events.getService().addEvent(event).enqueue(new retrofit2.Callback<Event>() {
                                                     @Override
                                                     public void onResponse(retrofit2.Call<Event> call, retrofit2.Response<Event> response) {
@@ -318,9 +318,7 @@ public class BlankFragment extends Fragment {
                     requireActivity().runOnUiThread(() -> {
                         photoEvent.setBackground(null);
                         addPhoto.setBackground(null);
-                        Picasso.get()
-                                .load(publicUrl)
-                                .into(photoEvent);
+                        Glide.with(requireContext()).load(publicUrl).into(photoEvent);
                     });
                 } else {
                     Log.e(TAG, "Ошибка ответа: " + response.message());

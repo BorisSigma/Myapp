@@ -8,6 +8,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -146,10 +147,8 @@ public class MapsFragment extends Fragment{
                                                 bundle1.putLong("id_user", user_id);
                                                 bundle1.putLong("id_event", event_id);
                                                 bundle1.putInt("exit", 0);
-                                                @SuppressLint("ResourceType")
-                                                NavController navController = Navigation.findNavController(getView());
-                                                navController.navigate(R.id.eventcheck, bundle1);
                                                 isTouch = true;
+                                                NavHostFragment.findNavController(MapsFragment.this).navigate(R.id.action_mapsFragment_to_eventcheck, bundle1);
                                             }
 
 
@@ -157,6 +156,7 @@ public class MapsFragment extends Fragment{
 
                                         @Override
                                         public void onFailure(Call<Event> call, Throwable t) {
+                                            Log.e("Error", t.getMessage());
 
 
                                         }

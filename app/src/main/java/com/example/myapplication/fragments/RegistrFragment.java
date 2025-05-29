@@ -42,6 +42,7 @@ public class RegistrFragment extends Fragment {
     private EditText passEt2;
     private EditText user_nameEt;
     private EditText cityEt;
+    private ImageView back;
     private AppCompatButton regBt;
     private boolean isPasswordVisible = false;
     private  void togglePasswordVisibility(EditText editText) {
@@ -71,6 +72,8 @@ public class RegistrFragment extends Fragment {
         cityEt = view.findViewById(R.id.reg_city_new);
         regBt = view.findViewById(R.id.bt_reg_reg);
         ImageView eyes = view.findViewById(R.id.eyes2);
+        back = view.findViewById(R.id.back1);
+
         ImageView eyes1 = view.findViewById(R.id.eyes3);
         eyes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,6 +94,12 @@ public class RegistrFragment extends Fragment {
             }
         });
         @SuppressLint("ResourceType") NavController navController = Navigation.findNavController(view);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navController.navigate(R.id.blankFragment);
+            }
+        });
         regBt.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("CommitPrefEdits")
             @Override
@@ -121,7 +130,7 @@ public class RegistrFragment extends Fragment {
                                             return;
                                         }
                                         requireActivity().runOnUiThread(() -> {
-                                            Client client = new Client(login, pass1, city, user_name);
+                                            Client client = new Client(login, pass1, city, user_name, 5.0);
                                             ApiClient.Users.getService().addClient(client).enqueue(new Callback<Client>() {
                                                 @Override
                                                 public void onResponse(Call<Client> call, Response<Client> response) {

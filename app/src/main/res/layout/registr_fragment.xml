@@ -11,6 +11,16 @@
         android:paddingBottom="40dp">
 
         <ImageView
+            android:id="@+id/back1"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:background="@drawable/image8"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
             android:id="@+id/reg_logo"
             android:layout_width="100dp"
             android:layout_height="58dp"

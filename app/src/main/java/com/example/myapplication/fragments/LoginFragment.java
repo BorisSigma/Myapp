@@ -37,6 +37,7 @@ public class LoginFragment extends Fragment { ;
     private EditText passwordEt;
     private AppCompatButton button;
     private boolean isPasswordVisible = false;
+    private ImageView back;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,6 +60,7 @@ public class LoginFragment extends Fragment { ;
         super.onViewCreated(view, savedInstanceState);
         loginEt = view.findViewById(R.id.logo_in_login);
         passwordEt = view.findViewById(R.id.logo_in_pass);
+        back = view.findViewById(R.id.back2);
         button = view.findViewById(R.id.bt_logo_in);
         ImageView eyes = view.findViewById(R.id.eyes1);
         eyes.setOnClickListener(new View.OnClickListener() {
@@ -70,6 +72,12 @@ public class LoginFragment extends Fragment { ;
 
 
         @SuppressLint("ResourceType") NavController navController = Navigation.findNavController(view);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navController.navigate(R.id.blankFragment);
+            }
+        });
         button.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("CommitPrefEdits")
             @Override

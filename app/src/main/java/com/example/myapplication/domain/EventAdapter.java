@@ -3,6 +3,7 @@ package com.example.myapplication.domain;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.GameManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.squareup.picasso.Picasso;
 
@@ -60,7 +62,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder>{
 
         holder.time.setText(event.getEvent_time());
         holder.name.setText(event.getEventName());
-        Picasso.get().load(event.getEventUrl()).into(holder.image);
+        Glide.with(context).load(event.getEventUrl()).into(holder.image);
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
